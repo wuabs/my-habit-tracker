@@ -138,6 +138,42 @@ textarea{width:100%;resize:vertical;min-height:95px}
  .header-actions{width:100%}
  .month-picker{flex:1}
 }
+
+.mood-popover {
+  position: fixed;
+  z-index: 1000;
+  width: min(260px, calc(100vw - 24px));
+  padding: 14px;
+  background: #fffdf9;
+  color: #38352f;
+  border: 1px solid #e8e1d6;
+  border-radius: 14px;
+  box-shadow: 0 6px 24px rgba(50, 40, 25, 0.16);
+  font-size: 14px;
+  line-height: 1.45;
+}
+.mood-popover-note {
+  margin-top: 9px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 180px;
+  overflow-y: auto;
+}
+.mood-popover-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+.mood-popover-actions button {
+  border: 0;
+  border-radius: 8px;
+  padding: 7px 12px;
+  background: #eee8dc;
+  color: #38352f;
+  font: inherit;
+  cursor: pointer;
+}
+
 </style>
 </head>
 <body>
@@ -396,7 +432,7 @@ function renderCalendar(){
   el.onblur=()=>{if(/^\d:\d{2}$/.test(el.value)){el.value="0"+el.value;el.dispatchEvent(new Event("change"))}};
  });
  $("calendar").querySelectorAll("[data-mood-date]").forEach(el=>{
-  el.onclick=()=>previewMood(el.dataset.moodDate,true);
+  el.onclick=e=>{e.stopPropagation();previewMood(el.dataset.moodDate,true,el)};
   el.onmouseenter=()=>{if(el.title)el.setAttribute("aria-label",el.title)};
  });
 }
@@ -435,7 +471,7 @@ function renderOverview(){
 function renderMoodHistory(){
  const keys=monthKeys(selected).filter(k=>day(k).mood);
  $("moodHistory").innerHTML=keys.length?keys.map(k=>`<button class="mood-cell" style="width:auto;height:auto;padding:7px" data-open-date="${k}" title="${k}: ${moodOf(day(k).mood).t}${day(k).note?" — "+day(k).note:""}">${moodOf(day(k).mood).e}<small style="display:block;font-size:9px">${Number(k.slice(-2))}</small></button>`).join(""):'<span class="muted">Отметь настроение в календаре — здесь появится история.</span>';
- $("moodHistory").querySelectorAll("[data-open-date]").forEach(b=>b.onclick=()=>previewMood(b.dataset.openDate,false));
+ $("moodHistory").querySelectorAll("[data-open-date]").forEach(b=>b.onclick=e=>{e.stopPropagation();previewMood(b.dataset.openDate,false,b)});
 }
 
 function openMood(k){
@@ -451,12 +487,45 @@ function openMood(k){
  $("moodModal").classList.add("open");
 }
 
-function previewMood(k, canEdit){
+
+function previewMood(k, canEdit, anchor){
  const d=day(k);
  if(!d.mood&&!d.note){
   if(canEdit)openMood(k);
   return;
  }
+ document.querySelectorAll(".mood-popover").forEach(el=>el.remove());
+ const pop=document.createElement("div");
+ pop.className="mood-popover";
+ const m=moodOf(d.mood);
+ pop.innerHTML=`<div style="font-weight:600;font-size:15px">${m.e||"💭"} ${escapeHtml(m.t||"Настроение")}</div>
+ <div style="font-size:12px;opacity:.7">${escapeHtml(fmt(parseKey(k),{day:"numeric",month:"long",year:"numeric"}))}</div>
+ ${d.note?`<div class="mood-popover-note">${escapeHtml(d.note)}</div>`:""}
+ ${canEdit?'<div class="mood-popover-actions"><button type="button">Изменить</button></div>':""}`;
+ document.body.appendChild(pop);
+ const r=anchor?.getBoundingClientRect();
+ const w=pop.offsetWidth,h=pop.offsetHeight;
+ let left=r?r.left:window.innerWidth/2-w/2;
+ let top=r?r.bottom+6:window.innerHeight/2-h/2;
+ left=Math.max(12,Math.min(left,window.innerWidth-w-12));
+ if(top+h>window.innerHeight-12)top=r?Math.max(12,r.top-h-6):Math.max(12,window.innerHeight-h-12);
+ pop.style.left=left+"px";
+ pop.style.top=top+"px";
+ if(canEdit){
+  pop.querySelector("button").onclick=()=>{
+   pop.remove();
+   openMood(k);
+  };
+ }
+ const closeOutside=e=>{
+  if(!pop.contains(e.target)&&e.target!==anchor){
+   pop.remove();
+   document.removeEventListener("click",closeOutside,true);
+  }
+ };
+ setTimeout(()=>document.addEventListener("click",closeOutside,true),0);
+}
+
  modalDate=k;
  $("modalTitle").textContent=moodOf(d.mood).t||"Настроение";
  $("modalDate").textContent=fmt(parseKey(k),{weekday:"long",day:"numeric",month:"long",year:"numeric"});
