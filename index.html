@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Мои привычки</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:18px;background:#fbf6f4;color:#514448;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+main{max-width:900px;margin:auto}
+h1{font-size:36px;margin:8px 0}
+p{color:#89777c;line-height:1.5}
+.card{background:#fffdfc;border:1px solid #eee2e4;border-radius:22px;padding:18px;margin:15px 0}
+.hero{background:linear-gradient(130deg,#f5e1e7,#e6eddf);padding:24px;border-radius:24px}
+.progress{height:9px;background:#eadfe1;border-radius:10px;overflow:hidden;margin:12px 0}
+#bar{height:100%;width:0;background:#9eb79a}
+.grid{overflow-x:auto}
+table{border-collapse:separate;border-spacing:5px;width:100%;min-width:480px}
+th{font-size:11px;color:#9a858b;font-weight:500}
+td:first-child{min-width:130px;font-size:13px}
+td button{width:100%;height:34px;border:0;border-radius:10px;background:#f3ebec;color:white;font-size:16px}
+td button.on{background:#9eb79a}
+input{padding:12px;border:1px solid #eadfe1;border-radius:12px;font-size:15px;min-width:0}
+button.action{padding:11px 14px;border:0;border-radius:12px;background:#dce9d8;color:#514448;font-weight:600}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row input{flex:1}
+.moods button{font-size:24px;padding:8px;border:1px solid #eee2e4;border-radius:12px;background:white}
+.moods button.selected{background:#dce9d8}
+.stats{display:flex;gap:12px;flex-wrap:wrap}
+.stat{flex:1;min-width:100px;background:#f8eeef;padding:14px;border-radius:16px}
+.stat strong{display:block;font-size:25px;margin-top:5px}
+small{color:#99868b}
+</style>
+</head>
+<body>
+<main>
+<div class="hero">
+<small>МАЛЕНЬКИЕ ШАГИ КАЖДЫЙ ДЕНЬ</small>
+<h1>Мои привычки 🌿</h1>
+<p>Не идеально, а регулярно. Отмечай то, что получилось, и двигайся в своём темпе.</p>
+<strong>Сегодня выполнено: <span id="done">0</span> / <span id="total">0</span></strong>
+<div class="progress"><div id="bar"></div></div>
+<span id="message">Начни с одной привычки</span>
+</div>
+<section class="card">
+<h2>Моя неделя</h2>
+<p>Нажимай на клетку, чтобы отметить выполнение.</p>
+<div class="grid"><table id="table"></table></div>
+<div class="row" style="margin-top:15px">
+<input id="habit" placeholder="Новая привычка">
+<button class="action" id="add">＋ Добавить</button>
+</div>
+</section>
+<section class="card">
+<h2>Мой настрой сегодня</h2>
+<div class="moods" id="moods">
+<button data-m="😔">😔</button>
+<button data-m="😐">😐</button>
+<button data-m="🙂">🙂</button>
+<button data-m="😊">😊</button>
+<button data-m="🤩">🤩</button>
+</div>
+<p id="moodText">Выбери настроение без оценки себя.</p>
+</section>
+<section class="card">
+<h2>Моя статистика за неделю</h2>
+<div class="stats">
+<div class="stat">Всего отметок<strong id="week">0</strong></div>
+<div class="stat">Лучший день<strong id="best">—</strong></div>
+<div class="stat">Привычек<strong id="count">0</strong></div>
+</div>
+<p>Твои отметки сохраняются в браузере на этом устройстве.</p>
+<button class="action" id="export">Сохранить резервную копию</button>
+</section>
+<p style="text-align:center;font-size:12px">Будь к себе бережна ♡</p>
+</main>
+<script>
+const KEY='my-habits-v1';
+const defaults=['Вода утром','Движение / прогулка','Растяжка или FM','Полезный завтрак','Уход за собой','Чтение / обучение'];
+let s={habits:defaults.map((name,i)=>({id:'h'+i,name})),checks:{},mood:{}};
+try{if(localStorage.getItem(KEY))s=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+const $=id=>document.getElementById(id);
+const key=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const today=key(new Date());
+const days=Array.from({length:7},(_,i)=>{let d=new Date();d.setDate(d.getDate()-6+i);return d});
+const safe=t=>t.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function save(){localStorage.setItem(KEY,JSON.stringify(s));render()}
+function render(){
+let html='<thead><tr><th>Привычка</th>'+days.map(d=>'<th>'+d.toLocaleDateString('ru-RU',{weekday:'short'})+'<br>'+d.getDate()+'</th>').join('')+'</tr></thead><tbody>';
+s.habits.forEach(h=>{html+='<tr><td>🌱 '+safe(h.name)+'</td>';days.forEach(d=>{let k=h.id+'|'+key(d),on=!!s.checks[k];html+='<td><button class="'+(on?'on':'')+'" data-k="'+k+'">'+(on?'✓':'')+'</button></td>'});html+='</tr>'});
+$('table').innerHTML=html+'</tbody>';
+$('table').querySelectorAll('button').forEach(b=>b.onclick=()=>{s.checks[b.dataset.k]=!s.checks[b.dataset.k];save()});
+let done=s.habits.filter(h=>s.checks[h.id+'|'+today]).length;
+$('done').textContent=done;$('total').textContent=s.habits.length;$('bar').style.width=(s.habits.length?done/s.habits.length*100:0)+'%';
+$('message').textContent=done===s.habits.length&&done?'Ты справилась со всем запланированным ✨':done?'Хороший шаг — продолжай в своём темпе':'Начни с одной привычки';
+let total=0,best={n:0,name:'—'};
+days.forEach(d=>{let n=s.habits.filter(h=>s.checks[h.id+'|'+key(d)]).length;total+=n;if(n>best.n)best={n,name:d.toLocaleDateString('ru-RU',{weekday:'short'})}});
+$('week').textContent=total;$('best').textContent=best.name;$('count').textContent=s.habits.length;
+document.querySelectorAll('[data-m]').forEach(b=>b.classList.toggle('selected',b.dataset.m===s.mood[today]));
+$('moodText').textContent=s.mood[today]?'Сегодня твоё настроение: '+s.mood[today]:'Выбери настроение без оценки себя.';
+}
+$('add').onclick=()=>{let input=$('habit'),name=input.value.trim();if(!name)return;if(s.habits.length>=12){alert('Можно добавить до 12 привычек');return}s.habits.push({id:'h'+Date.now(),name});input.value='';save()};
+$('habit').onkeydown=e=>{if(e.key==='Enter')$('add').click()};
+document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{s.mood[today]=b.dataset.m;save()});
+$('export').onclick=()=>{let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(s,null,2)],{type:'application/json'}));a.download='my-habits-backup.json';a.click();URL.revokeObjectURL(a.href)};
+render();
+</script>
+</body>
+</html>
