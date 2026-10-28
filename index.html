@@ -4,106 +4,272 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Мои привычки</title>
+<meta name="theme-color" content="#f8eef0">
+<title>Bloom — мой трекер привычек</title>
 <style>
+:root{
+ --bg:#f8f5f2;--paper:#fffdfb;--pink:#f2dfe5;--pink2:#dfb9c5;
+ --green:#e1eadb;--green2:#a8bea0;--green3:#71896b;
+ --ink:#4d4246;--muted:#98888c;--line:#eee4e4;--lav:#ece7f3;
+ --shadow:0 8px 30px #6e50500a;
+}
 *{box-sizing:border-box}
-body{margin:0;padding:18px;background:#fbf6f4;color:#514448;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
-main{max-width:900px;margin:auto}
-h1{font-size:36px;margin:8px 0}
-p{color:#89777c;line-height:1.5}
-.card{background:#fffdfc;border:1px solid #eee2e4;border-radius:22px;padding:18px;margin:15px 0}
-.hero{background:linear-gradient(130deg,#f5e1e7,#e6eddf);padding:24px;border-radius:24px}
-.progress{height:9px;background:#eadfe1;border-radius:10px;overflow:hidden;margin:12px 0}
-#bar{height:100%;width:0;background:#9eb79a}
-.grid{overflow-x:auto}
-table{border-collapse:separate;border-spacing:5px;width:100%;min-width:480px}
-th{font-size:11px;color:#9a858b;font-weight:500}
-td:first-child{min-width:130px;font-size:13px}
-td button{width:100%;height:34px;border:0;border-radius:10px;background:#f3ebec;color:white;font-size:16px}
-td button.on{background:#9eb79a}
-input{padding:12px;border:1px solid #eadfe1;border-radius:12px;font-size:15px;min-width:0}
-button.action{padding:11px 14px;border:0;border-radius:12px;background:#dce9d8;color:#514448;font-weight:600}
-.row{display:flex;gap:8px;flex-wrap:wrap}
-.row input{flex:1}
-.moods button{font-size:24px;padding:8px;border:1px solid #eee2e4;border-radius:12px;background:white}
-.moods button.selected{background:#dce9d8}
-.stats{display:flex;gap:12px;flex-wrap:wrap}
-.stat{flex:1;min-width:100px;background:#f8eeef;padding:14px;border-radius:16px}
-.stat strong{display:block;font-size:25px;margin-top:5px}
-small{color:#99868b}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+.app{max-width:1450px;margin:auto;padding:26px}
+.header{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:24px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:48px;height:48px;display:grid;place-items:center;background:var(--pink);border-radius:17px;font-size:25px}
+.kicker{font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase}
+h1{font-size:28px;letter-spacing:-1px;margin:3px 0;font-weight:650}
+.header-right{display:flex;align-items:center;gap:10px}
+.today-pill,.soft-button{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:11px 14px;color:var(--ink)}
+.greeting{background:linear-gradient(115deg,#f3e0e6,#f8efec 57%,#e4ecdf);border-radius:26px;padding:25px 28px;display:grid;grid-template-columns:1.3fr .7fr;gap:20px;align-items:center;margin-bottom:18px}
+.greeting h2{font-size:clamp(23px,3vw,34px);margin:8px 0}
+.greeting p{color:#817177;line-height:1.6;max-width:570px;margin:0}
+.greeting .subline{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#927d84}
+.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.hero-stat{background:#ffffff9c;padding:15px;border-radius:18px}
+.hero-stat strong{font-size:26px;display:block;margin-bottom:5px}
+.hero-stat span{font-size:11px;color:#8a777d}
+.layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,.8fr);gap:18px;align-items:start}
+.left,.right{display:flex;flex-direction:column;gap:18px;min-width:0}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:23px;padding:21px;box-shadow:var(--shadow);min-width:0}
+.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:17px}
+.card h3{font-size:17px;margin:0 0 5px}
+.muted{font-size:12px;color:var(--muted);line-height:1.5}
+.pill{display:inline-block;background:#f7eaed;border-radius:20px;padding:6px 10px;font-size:11px;color:#94747e}
+.calendar-nav{display:flex;align-items:center;gap:9px}
+.calendar-nav button{width:32px;height:32px;border:1px solid var(--line);background:#fff;border-radius:10px;color:var(--ink)}
+.calendar-nav strong{font-size:14px;min-width:110px;text-align:center}
+.calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px}
+.cal-label{text-align:center;font-size:10px;color:var(--muted);padding:4px 0 8px}
+.cal-day{border:1px solid #f0e8e8;border-radius:13px;min-height:63px;background:#fff;padding:8px 4px 5px;text-align:center;position:relative}
+.cal-day .num{font-size:12px}
+.cal-day .dots{display:flex;gap:3px;justify-content:center;flex-wrap:wrap;margin-top:9px}
+.cal-day .dots i{width:5px;height:5px;background:#b4c7ac;border-radius:50%}
+.cal-day.other{opacity:.35;background:#faf7f5}
+.cal-day.today{border:1.5px solid #c99cab;background:#fcf1f4}
+.cal-day.selected{box-shadow:inset 0 0 0 1px #9caf96;background:#eff4eb}
+.week-wrap{overflow-x:auto}
+.week-grid{min-width:570px;display:grid;grid-template-columns:minmax(140px,1.5fr) repeat(7,minmax(39px,1fr));gap:6px}
+.week-cell{display:flex;align-items:center;justify-content:center;min-height:36px;font-size:11px;color:var(--muted)}
+.week-cell:first-child{justify-content:flex-start}
+.week-name{font-size:12px;color:var(--ink);gap:8px;justify-content:flex-start}
+.habit-icon{width:25px;height:25px;display:grid;place-items:center;background:#f6e8eb;border-radius:9px;flex-shrink:0}
+.week-tick{width:100%;height:35px;border:0;background:#f4eded;border-radius:11px;color:white;font-size:15px}
+.week-tick.on{background:#a9c19f}
+.week-tick.current{outline:1px solid #d5aeb9;outline-offset:1px}
+.add-row{display:flex;gap:8px;margin-top:15px}
+.text-input{width:100%;min-width:0;border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px 12px;color:var(--ink);outline:none}
+.text-input:focus,textarea:focus{border-color:#cba6b2}
+.primary{border:0;background:#dce8d7;color:#4c5b48;border-radius:12px;padding:11px 15px;font-weight:600;white-space:nowrap}
+.secondary{border:0;background:#f5e7eb;color:#765d65;border-radius:11px;padding:9px 11px;font-size:12px}
+.habit-tools{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}
+.habit-tools button{font-size:11px}
+.progress-row{display:flex;justify-content:space-between;align-items:center;margin:14px 0 7px;font-size:12px}
+.progress-track{height:8px;background:#f0e7e8;border-radius:20px;overflow:hidden}
+.progress-fill{height:100%;width:0;background:linear-gradient(90deg,#d8aeba,#9fb99a);border-radius:20px;transition:width .25s}
+.stat-list{display:flex;flex-direction:column}
+.stat-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);font-size:12px}
+.stat-row:last-child{border:0}
+.stat-row strong{font-size:18px}
+.chart{width:100%;height:150px;display:block}
+.chart-labels{display:flex;justify-content:space-between;color:var(--muted);font-size:10px;margin-top:4px}
+.moods{display:flex;gap:8px;flex-wrap:wrap}
+.mood-btn{border:1px solid var(--line);background:#fff;border-radius:14px;width:46px;height:46px;font-size:22px}
+.mood-btn.selected{background:#e4eddf;border-color:#b6c8ad}
+textarea{resize:vertical;width:100%;min-height:94px;border:1px solid var(--line);border-radius:13px;padding:12px;background:#fff;color:var(--ink);outline:none;line-height:1.5}
+.note-footer{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:9px}
+.quote{background:#e9efe4;border-radius:20px;padding:19px;line-height:1.6;font-size:13px}
+.quote strong{display:block;font-size:14px;margin-bottom:6px}
+.history{display:flex;flex-direction:column;gap:9px}
+.history-item{background:#faf5f4;border-radius:13px;padding:11px;display:flex;justify-content:space-between;gap:8px;font-size:12px}
+.history-item span{color:var(--muted)}
+.footer{text-align:center;font-size:10px;color:var(--muted);padding:18px 0}
+.empty{padding:18px;text-align:center;color:var(--muted);font-size:12px}
+@media(max-width:900px){
+ .app{padding:16px}.layout{grid-template-columns:1fr}.greeting{grid-template-columns:1fr}.hero-stats{max-width:600px}
+}
+@media(max-width:520px){
+ .app{padding:11px}.header{align-items:flex-start}.logo{width:40px;height:40px}h1{font-size:23px}.header-right .today-pill{display:none}
+ .greeting{padding:19px;border-radius:21px}.hero-stats{gap:6px}.hero-stat{padding:11px}.hero-stat strong{font-size:22px}.hero-stat span{font-size:10px}
+ .card{padding:15px;border-radius:19px}.calendar{gap:4px}.cal-day{min-height:49px;padding:6px 2px}.cal-day .dots{margin-top:7px}.calendar-nav strong{min-width:90px;font-size:12px}
+}
 </style>
 </head>
 <body>
-<main>
-<div class="hero">
-<small>МАЛЕНЬКИЕ ШАГИ КАЖДЫЙ ДЕНЬ</small>
-<h1>Мои привычки 🌿</h1>
-<p>Не идеально, а регулярно. Отмечай то, что получилось, и двигайся в своём темпе.</p>
-<strong>Сегодня выполнено: <span id="done">0</span> / <span id="total">0</span></strong>
-<div class="progress"><div id="bar"></div></div>
-<span id="message">Начни с одной привычки</span>
-</div>
-<section class="card">
-<h2>Моя неделя</h2>
-<p>Нажимай на клетку, чтобы отметить выполнение.</p>
-<div class="grid"><table id="table"></table></div>
-<div class="row" style="margin-top:15px">
-<input id="habit" placeholder="Новая привычка">
-<button class="action" id="add">＋ Добавить</button>
-</div>
+<div class="app">
+<header class="header">
+ <div class="brand"><div class="logo">🌷</div><div><div class="kicker">мой личный планер</div><h1>Bloom & Balance</h1></div></div>
+ <div class="header-right"><span class="today-pill" id="todayText"></span><button class="soft-button" id="exportBtn">↗ Резервная копия</button></div>
+</header>
+
+<section class="greeting">
+ <div><div class="subline">Твой ритм · твои правила</div><h2>Расти в своём темпе ✨</h2><p>Маленькие действия складываются в большие перемены. Отмечай то, что получилось, и оставляй место для отдыха.</p></div>
+ <div class="hero-stats">
+  <div class="hero-stat"><strong id="heroPercent">0%</strong><span>выполнено сегодня</span></div>
+  <div class="hero-stat"><strong id="heroStreak">0</strong><span>дней подряд</span></div>
+  <div class="hero-stat"><strong id="heroMonth">0</strong><span>отметок за месяц</span></div>
+ </div>
 </section>
+
+<div class="layout">
+<div class="left">
 <section class="card">
-<h2>Мой настрой сегодня</h2>
-<div class="moods" id="moods">
-<button data-m="😔">😔</button>
-<button data-m="😐">😐</button>
-<button data-m="🙂">🙂</button>
-<button data-m="😊">😊</button>
-<button data-m="🤩">🤩</button>
-</div>
-<p id="moodText">Выбери настроение без оценки себя.</p>
+ <div class="card-head"><div><h3>Календарь месяца</h3><div class="muted">Твой прогресс день за днём</div></div><div class="calendar-nav"><button id="prevMonth" aria-label="Предыдущий месяц">‹</button><strong id="monthTitle"></strong><button id="nextMonth" aria-label="Следующий месяц">›</button></div></div>
+ <div class="calendar" id="calendar"></div>
+ <div class="progress-row"><span>Привычки в выбранный день</span><strong id="selectedProgress">0%</strong></div><div class="progress-track"><div class="progress-fill" id="selectedBar"></div></div>
 </section>
+
 <section class="card">
-<h2>Моя статистика за неделю</h2>
-<div class="stats">
-<div class="stat">Всего отметок<strong id="week">0</strong></div>
-<div class="stat">Лучший день<strong id="best">—</strong></div>
-<div class="stat">Привычек<strong id="count">0</strong></div>
-</div>
-<p>Твои отметки сохраняются в браузере на этом устройстве.</p>
-<button class="action" id="export">Сохранить резервную копию</button>
+ <div class="card-head"><div><h3>Мои привычки</h3><div class="muted">Недельный обзор · нажимай на клетку, чтобы отметить</div></div><span class="pill" id="weekRange"></span></div>
+ <div class="week-wrap"><div class="week-grid" id="weekGrid"></div></div>
+ <div class="add-row"><input class="text-input" id="habitInput" maxlength="55" placeholder="Добавить новую привычку…"><button class="primary" id="addHabit">＋ Добавить</button></div>
+ <div class="habit-tools"><button class="secondary" id="renameHabit">✎ Переименовать</button><button class="secondary" id="deleteHabit">− Удалить привычку</button><button class="secondary" id="clearDay">Снять отметки за выбранный день</button></div>
 </section>
-<p style="text-align:center;font-size:12px">Будь к себе бережна ♡</p>
-</main>
+
+<section class="card">
+ <div class="card-head"><div><h3>Динамика выполнения</h3><div class="muted">Сколько привычек получилось выполнить каждый день</div></div><span class="pill">Последние 7 дней</span></div>
+ <svg class="chart" id="chart" viewBox="0 0 600 150" preserveAspectRatio="none" role="img" aria-label="График выполнения привычек"></svg>
+ <div class="chart-labels" id="chartLabels"></div>
+</section>
+</div>
+
+<aside class="right">
+<section class="card">
+ <div class="card-head"><div><h3>Месячная статистика</h3><div class="muted" id="statsMonth"></div></div><span style="font-size:22px">📊</span></div>
+ <div class="stat-list">
+  <div class="stat-row"><span>Всего выполнений</span><strong id="statDone">0</strong></div>
+  <div class="stat-row"><span>Среднее за день</span><strong id="statAverage">0</strong></div>
+  <div class="stat-row"><span>Самый продуктивный день</span><strong id="statBest">—</strong></div>
+  <div class="stat-row"><span>Привычек в списке</span><strong id="statHabits">0</strong></div>
+ </div>
+ <div class="progress-row"><span>Общий прогресс месяца</span><strong id="monthPercent">0%</strong></div><div class="progress-track"><div class="progress-fill" id="monthBar"></div></div>
+</section>
+
+<section class="card">
+ <div class="card-head"><div><h3>Моё настроение</h3><div class="muted" id="moodDate"></div></div><span style="font-size:22px">☁️</span></div>
+ <div class="moods" id="moods"><button class="mood-btn" data-mood="😔">😔</button><button class="mood-btn" data-mood="😐">😐</button><button class="mood-btn" data-mood="🙂">🙂</button><button class="mood-btn" data-mood="😊">😊</button><button class="mood-btn" data-mood="🤩">🤩</button></div>
+ <p class="muted" id="moodMessage">Как ты себя чувствуешь в выбранный день?</p>
+ <div class="progress-row"><span>Настроение за неделю</span><strong id="moodCount">0 / 7</strong></div>
+</section>
+
+<section class="card">
+ <div class="card-head"><div><h3>Заметки дня</h3><div class="muted">Мысли, наблюдения и маленькие победы</div></div><span style="font-size:22px">✍️</span></div>
+ <textarea id="note" placeholder="Что сегодня было важным? Что хочется запомнить?"></textarea>
+ <div class="note-footer"><span class="muted" id="noteStatus">Сохраняется автоматически</span><button class="secondary" id="clearNote">Очистить</button></div>
+</section>
+
+<section class="card">
+ <div class="card-head"><div><h3>Недавние записи</h3><div class="muted">Настроение и заметки</div></div></div>
+ <div class="history" id="history"></div>
+</section>
+
+<div class="quote"><strong>♡ Напоминание себе</strong>Не нужно делать всё идеально. Твоя ценность не зависит от продуктивности. Даже маленький шаг — уже забота о себе.</div>
+</aside>
+</div>
+<div class="footer">Bloom & Balance · Данные хранятся в браузере на этом устройстве</div>
+</div>
+
 <script>
-const KEY='my-habits-v1';
-const defaults=['Вода утром','Движение / прогулка','Растяжка или FM','Полезный завтрак','Уход за собой','Чтение / обучение'];
-let s={habits:defaults.map((name,i)=>({id:'h'+i,name})),checks:{},mood:{}};
-try{if(localStorage.getItem(KEY))s=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+const STORE='bloom-balance-tracker-v2';
+const initial=['Вода утром','Движение / прогулка','Растяжка или FM','Полезный завтрак','Уход за собой','Чтение / обучение'];
+let data={habits:initial.map((name,i)=>({id:'h'+i,name})),checks:{},moods:{},notes:{}};
+try{const old=localStorage.getItem(STORE);if(old)data={...data,...JSON.parse(old)}}catch(e){}
+let selected=new Date();selected.setHours(12,0,0,0);
+let monthView=new Date();monthView.setDate(1);
 const $=id=>document.getElementById(id);
-const key=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-const today=key(new Date());
-const days=Array.from({length:7},(_,i)=>{let d=new Date();d.setDate(d.getDate()-6+i);return d});
-const safe=t=>t.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function save(){localStorage.setItem(KEY,JSON.stringify(s));render()}
-function render(){
-let html='<thead><tr><th>Привычка</th>'+days.map(d=>'<th>'+d.toLocaleDateString('ru-RU',{weekday:'short'})+'<br>'+d.getDate()+'</th>').join('')+'</tr></thead><tbody>';
-s.habits.forEach(h=>{html+='<tr><td>🌱 '+safe(h.name)+'</td>';days.forEach(d=>{let k=h.id+'|'+key(d),on=!!s.checks[k];html+='<td><button class="'+(on?'on':'')+'" data-k="'+k+'">'+(on?'✓':'')+'</button></td>'});html+='</tr>'});
-$('table').innerHTML=html+'</tbody>';
-$('table').querySelectorAll('button').forEach(b=>b.onclick=()=>{s.checks[b.dataset.k]=!s.checks[b.dataset.k];save()});
-let done=s.habits.filter(h=>s.checks[h.id+'|'+today]).length;
-$('done').textContent=done;$('total').textContent=s.habits.length;$('bar').style.width=(s.habits.length?done/s.habits.length*100:0)+'%';
-$('message').textContent=done===s.habits.length&&done?'Ты справилась со всем запланированным ✨':done?'Хороший шаг — продолжай в своём темпе':'Начни с одной привычки';
-let total=0,best={n:0,name:'—'};
-days.forEach(d=>{let n=s.habits.filter(h=>s.checks[h.id+'|'+key(d)]).length;total+=n;if(n>best.n)best={n,name:d.toLocaleDateString('ru-RU',{weekday:'short'})}});
-$('week').textContent=total;$('best').textContent=best.name;$('count').textContent=s.habits.length;
-document.querySelectorAll('[data-m]').forEach(b=>b.classList.toggle('selected',b.dataset.m===s.mood[today]));
-$('moodText').textContent=s.mood[today]?'Сегодня твоё настроение: '+s.mood[today]:'Выбери настроение без оценки себя.';
+const dateKey=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const todayKey=dateKey(new Date());
+const parseDate=k=>{const [y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d,12)};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const sameDay=(a,b)=>dateKey(a)===dateKey(b);
+const dayNames=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+const monthNames=['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'];
+function shiftDay(d,n){let x=new Date(d);x.setDate(x.getDate()+n);return x}
+function monday(d){let x=new Date(d);x.setHours(12,0,0,0);x.setDate(x.getDate()-(x.getDay()+6)%7);return x}
+function checked(h,k){return !!data.checks[h.id+'|'+k]}
+function dayDone(d){const k=dateKey(d);return data.habits.filter(h=>checked(h,k)).length}
+function save(){try{localStorage.setItem(STORE,JSON.stringify(data));$('noteStatus').textContent='Сохранено'}catch(e){$('noteStatus').textContent='Не удалось сохранить'}render()}
+function renderCalendar(){
+ $('monthTitle').textContent=monthNames[monthView.getMonth()]+' '+monthView.getFullYear();
+ $('calendar').innerHTML=dayNames.map(n=>'<div class="cal-label">'+n+'</div>').join('');
+ const first=new Date(monthView.getFullYear(),monthView.getMonth(),1,12);
+ const start=monday(first);
+ for(let i=0;i<42;i++){
+  const d=shiftDay(start,i),k=dateKey(d),n=dayDone(d),el=document.createElement('button');
+  el.className='cal-day'+(d.getMonth()!==monthView.getMonth()?' other':'')+(k===todayKey?' today':'')+(sameDay(d,selected)?' selected':'');
+  el.innerHTML='<span class="num">'+d.getDate()+'</span><span class="dots">'+Array.from({length:Math.min(n,7)},()=>'<i></i>').join('')+'</span>';
+  el.setAttribute('aria-label',k+', выполнено '+n+' привычек');el.onclick=()=>{selected=d;render()};$('calendar').appendChild(el);
+ }
+ const n=dayDone(selected),pct=data.habits.length?Math.round(n/data.habits.length*100):0;
+ $('selectedProgress').textContent=pct+'%';$('selectedBar').style.width=pct+'%';
 }
-$('add').onclick=()=>{let input=$('habit'),name=input.value.trim();if(!name)return;if(s.habits.length>=12){alert('Можно добавить до 12 привычек');return}s.habits.push({id:'h'+Date.now(),name});input.value='';save()};
-$('habit').onkeydown=e=>{if(e.key==='Enter')$('add').click()};
-document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{s.mood[today]=b.dataset.m;save()});
-$('export').onclick=()=>{let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(s,null,2)],{type:'application/json'}));a.download='my-habits-backup.json';a.click();URL.revokeObjectURL(a.href)};
+function renderWeek(){
+ const start=monday(selected),days=Array.from({length:7},(_,i)=>shiftDay(start,i));
+ $('weekRange').textContent=days[0].getDate()+'–'+days[6].getDate()+' '+monthNames[days[6].getMonth()].slice(0,3);
+ let html='<div class="week-cell">Привычка</div>'+days.map(d=>'<div class="week-cell">'+dayNames[(d.getDay()+6)%7]+'<br>'+d.getDate()+'</div>').join('');
+ data.habits.forEach(h=>{
+  html+='<div class="week-cell week-name"><span class="habit-icon">🌱</span><span>'+esc(h.name)+'</span></div>';
+  days.forEach(d=>{const k=dateKey(d),on=checked(h,k);html+='<div class="week-cell"><button class="week-tick '+(on?'on':'')+' '+(k===todayKey?'current':'')+'" data-h="'+h.id+'" data-d="'+k+'" aria-label="'+esc(h.name)+' '+k+'">'+(on?'✓':'')+'</button></div>'});
+ });
+ $('weekGrid').innerHTML=html;
+ $('weekGrid').querySelectorAll('[data-h]').forEach(b=>b.onclick=()=>{const k=b.dataset.h+'|'+b.dataset.d;data.checks[k]=!data.checks[k];save()});
+}
+function renderChart(){
+ const days=Array.from({length:7},(_,i)=>shiftDay(new Date(),i-6));
+ const W=600,H=150,pad=18,base=120,top=12,usable=base-top,max=Math.max(1,data.habits.length);
+ const pts=days.map((d,i)=>({x:pad+i*(W-2*pad)/6,y:base-dayDone(d)/max*usable,n:dayDone(d)}));
+ let s='<defs><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#d7b0bd" stop-opacity=".42"/><stop offset="100%" stop-color="#d7b0bd" stop-opacity=".02"/></linearGradient></defs>';
+ [0,.5,1].forEach(t=>{let y=base-t*usable;s+='<line x1="10" y1="'+y+'" x2="590" y2="'+y+'" stroke="#eee5e5" stroke-dasharray="4 5"/>'});
+ const line=pts.map((p,i)=>(i?'L':'M')+p.x+' '+p.y).join(' ');
+ s+='<path d="'+line+' L '+pts[6].x+' '+base+' L '+pts[0].x+' '+base+' Z" fill="url(#fill)"/><path d="'+line+'" fill="none" stroke="#c99dac" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>';
+ pts.forEach(p=>{s+='<circle cx="'+p.x+'" cy="'+p.y+'" r="4" fill="#fff" stroke="#92ad8a" stroke-width="3"/>'});
+ $('chart').innerHTML=s;$('chartLabels').innerHTML=days.map(d=>'<span>'+d.toLocaleDateString('ru-RU',{weekday:'short'}).replace('.','')+'</span>').join('');
+}
+function renderStats(){
+ const y=monthView.getFullYear(),m=monthView.getMonth(),daysIn=new Date(y,m+1,0).getDate();
+ let done=0,best={n:0,date:'—'};
+ for(let i=1;i<=daysIn;i++){const d=new Date(y,m,i,12),n=dayDone(d);done+=n;if(n>best.n)best={n,date:d.toLocaleDateString('ru-RU',{day:'numeric',month:'short'})}}
+ const possible=data.habits.length*daysIn,pct=possible?Math.round(done/possible*100):0;
+ $('statsMonth').textContent=monthNames[m]+' '+y;$('statDone').textContent=done;
+ $('statAverage').textContent=(done/daysIn).toFixed(1).replace('.',',');$('statBest').textContent=best.n?best.date:'—';$('statHabits').textContent=data.habits.length;
+ $('monthPercent').textContent=pct+'%';$('monthBar').style.width=pct+'%';$('heroMonth').textContent=done;
+ let streak=0,d=new Date();d.setHours(12,0,0,0);
+ while(streak<366&&dayDone(d)>0){streak++;d=shiftDay(d,-1)}
+ $('heroStreak').textContent=streak;
+ const n=dayDone(new Date()),p=data.habits.length?Math.round(n/data.habits.length*100):0;
+ $('heroPercent').textContent=p+'%';
+}
+function renderMood(){
+ const k=dateKey(selected),m=data.moods[k];
+ $('moodDate').textContent=selected.toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
+ document.querySelectorAll('[data-mood]').forEach(b=>b.classList.toggle('selected',b.dataset.mood===m));
+ const labels={'😔':'Тяжёлый день — постарайся быть к себе бережнее.','😐':'Нейтральный день тоже нормален.','🙂':'Есть что-то приятное в сегодняшнем дне.','😊':'Похоже, сегодня было хорошо.','🤩':'Сохрани это ощущение и запомни, что помогло.'};
+ $('moodMessage').textContent=m?(labels[m]||m):'Как ты себя чувствуешь в выбранный день?';
+ let count=0,start=monday(new Date());for(let i=0;i<7;i++)if(data.moods[dateKey(shiftDay(start,i))])count++;
+ $('moodCount').textContent=count+' / 7';
+ $('note').value=data.notes[k]||'';
+ const entries=Object.keys(data.moods).filter(k=>data.moods[k]||data.notes[k]).sort().reverse().slice(0,5);
+ $('history').innerHTML=entries.length?entries.map(k=>'<div class="history-item"><div><strong>'+parseDate(k).toLocaleDateString('ru-RU',{day:'numeric',month:'short'})+'</strong><br><span>'+esc((data.notes[k]||'Без заметки').slice(0,48))+'</span></div><strong>'+esc(data.moods[k]||'✍️')+'</strong></div>').join(''):'<div class="empty">Здесь появятся твои записи</div>';
+}
+function render(){
+ $('todayText').textContent=new Date().toLocaleDateString('ru-RU',{weekday:'short',day:'numeric',month:'short'});
+ renderCalendar();renderWeek();renderChart();renderStats();renderMood();
+}
+$('prevMonth').onclick=()=>{monthView=new Date(monthView.getFullYear(),monthView.getMonth()-1,1);render()};
+$('nextMonth').onclick=()=>{monthView=new Date(monthView.getFullYear(),monthView.getMonth()+1,1);render()};
+$('addHabit').onclick=()=>{const input=$('habitInput'),name=input.value.trim();if(!name)return;if(data.habits.length>=15){alert('Можно отслеживать до 15 привычек');return}data.habits.push({id:'h'+Date.now(),name});input.value='';save()};
+$('habitInput').onkeydown=e=>{if(e.key==='Enter')$('addHabit').click()};
+$('renameHabit').onclick=()=>{if(!data.habits.length){alert('Сначала добавь привычку');return}const choices=data.habits.map((h,i)=>(i+1)+'. '+h.name).join('\n');const ans=prompt('Введи номер привычки для переименования:\n'+choices);if(ans===null)return;const i=Number(ans)-1;if(!Number.isInteger(i)||!data.habits[i]){alert('Неверный номер');return}const name=prompt('Новое название:',data.habits[i].name);if(name&&name.trim()){data.habits[i].name=name.trim();save()}};
+$('deleteHabit').onclick=()=>{if(!data.habits.length)return;const choices=data.habits.map((h,i)=>(i+1)+'. '+h.name).join('\n');const ans=prompt('Введи номер привычки для удаления:\n'+choices);if(ans===null)return;const i=Number(ans)-1;if(!Number.isInteger(i)||!data.habits[i]){alert('Неверный номер');return}if(confirm('Удалить привычку «'+data.habits[i].name+'»?')){const id=data.habits[i].id;data.habits.splice(i,1);Object.keys(data.checks).forEach(k=>{if(k.startsWith(id+'|'))delete data.checks[k]});save()}};
+$('clearDay').onclick=()=>{if(!confirm('Снять все отметки за выбранный день?'))return;const k=dateKey(selected);data.habits.forEach(h=>delete data.checks[h.id+'|'+k]);save()};
+document.querySelectorAll('[data-mood]').forEach(b=>b.onclick=()=>{const k=dateKey(selected);if(data.moods[k]===b.dataset.mood)delete data.moods[k];else data.moods[k]=b.dataset.mood;save()});
+$('note').oninput=()=>{data.notes[dateKey(selected)]=$('note').value;try{localStorage.setItem(STORE,JSON.stringify(data));$('noteStatus').textContent='Сохранено'}catch(e){$('noteStatus').textContent='Не удалось сохранить'}};
+$('clearNote').onclick=()=>{delete data.notes[dateKey(selected)];save()};
+$('exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='bloom-balance-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
 render();
 </script>
 </body>
