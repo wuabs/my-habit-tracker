@@ -168,12 +168,7 @@ textarea{width:100%;resize:vertical;min-height:95px}
   <div class="add-row"><input id="newHabit" type="text" maxlength="45" placeholder="Новая привычка…"><button id="addHabit">+</button></div>
   <p class="muted">Нажми на название привычки, чтобы изменить его. Отметки сохраняются по датам.</p>
  </section>
- <section class="panel">
-  <h3 class="panel-title">Today's mood</h3>
-  <div class="small-title">НАСТРОЕНИЕ СЕГОДНЯ</div>
-  <div class="mood-buttons" id="moodButtons"></div>
-  <div class="muted" id="moodLabel" style="margin-top:10px">Выбери настроение</div>
- </section>
+ 
  <section class="panel">
   <h3 class="panel-title">A gentle reminder</h3>
   <div style="font-family:Georgia,serif;font-size:16px;line-height:1.55">“You don't have to bloom every day.”</div>
@@ -182,18 +177,12 @@ textarea{width:100%;resize:vertical;min-height:95px}
 </aside>
 
 <main class="column">
- <section class="panel">
-  <div class="section-row" style="display:flex;justify-content:space-between;gap:8px;align-items:center">
-   <div><h3 class="panel-title" style="margin-bottom:4px">Your progress</h3><div class="small-title">ВЫПОЛНЕННЫЕ ПРИВЫЧКИ ПО ДНЯМ</div></div>
-   <span style="font-size:22px">🌳</span>
-  </div>
-  <svg class="chart" id="progressChart" viewBox="0 0 700 145" preserveAspectRatio="none"></svg>
-  <div class="chart-labels" id="chartLabels"></div>
- </section>
+ 
 
  <section class="panel">
   <div class="month-head">
-   <div><h2 id="monthTitle">Месяц</h2><div class="subtitle">Привычки, пробуждение, настроение и заметки</div></div>
+   <div><h2>Habit Tracker</h2>
+     <div class="subtitle" id="monthTitle">Месяц</div><div class="subtitle">Привычки, пробуждение, настроение и заметки</div></div>
    <div class="month-nav"><button id="prevMonth" aria-label="Предыдущий месяц">‹</button><button id="nextMonth" aria-label="Следующий месяц">›</button></div>
   </div>
   <div class="legend">
@@ -204,6 +193,15 @@ textarea{width:100%;resize:vertical;min-height:95px}
   <div class="calendar-wrap"><table class="calendar" id="calendar"></table></div>
   <div class="muted" style="margin-top:10px">Нажми на ячейку с галочкой, чтобы отметить привычку. В строке пробуждения введи время. Нажми на смайлик, чтобы изменить настроение или заметку этого дня.</div>
   <div class="week-summary" id="weekSummary"></div>
+ </section>
+
+ <section class="panel">
+  <div class="section-row" style="display:flex;justify-content:space-between;gap:8px;align-items:center">
+   <div><h3 class="panel-title" style="margin-bottom:4px">Your progress</h3><div class="small-title">ВЫПОЛНЕННЫЕ ПРИВЫЧКИ ПО ДНЯМ</div></div>
+   <span style="font-size:22px">🌳</span>
+  </div>
+  <svg class="chart" id="progressChart" viewBox="0 0 700 145" preserveAspectRatio="none"></svg>
+  <div class="chart-labels" id="chartLabels"></div>
  </section>
 
  <div class="two-charts">
@@ -230,11 +228,7 @@ textarea{width:100%;resize:vertical;min-height:95px}
   <h3 class="panel-title">Monthly overview</h3>
   <div id="monthlyOverview"></div>
  </section>
- <section class="panel">
-  <h3 class="panel-title">Wake-up overview 🌅</h3>
-  <div id="wakeOverview"></div>
-  <p class="muted">Время пробуждения по дням выбранного месяца. Среднее рассчитано только по заполненным дням.</p>
- </section>
+ 
  <section class="panel">
   <h3 class="panel-title">Mood garden</h3>
   <div id="moodHistory" style="display:flex;gap:5px;flex-wrap:wrap"></div>
