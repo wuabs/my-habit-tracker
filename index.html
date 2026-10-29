@@ -451,41 +451,75 @@ function openMood(k){
  $("moodModal").classList.add("open");
 }
 
-function previewMood(k, canEdit){
+
+function previewMood(k, canEdit, anchor){
  const d=day(k);
  if(!d.mood&&!d.note){
   if(canEdit)openMood(k);
   return;
  }
- modalDate=k;
- $("modalTitle").textContent=moodOf(d.mood).t||"Настроение";
- $("modalDate").textContent=fmt(parseKey(k),{weekday:"long",day:"numeric",month:"long",year:"numeric"});
- $("modalNote").value=d.note||"";
- renderMoodChoices();
- $("moodChoices").style.display="none";
- $("modalNote").readOnly=true;
- $("modalNote").style.display=d.note?"block":"none";
- $("saveDay").style.display="none";
- let editBtn=$("editMoodPreview");
- if(!editBtn){
-  editBtn=document.createElement("button");
-  editBtn.id="editMoodPreview";
-  editBtn.className="btn";
-  editBtn.textContent="Изменить";
-  editBtn.style.cssText="position:absolute;right:90px;top:18px;padding:6px 12px;font-size:12px";
-  $("moodModal").querySelector(".modal-top").appendChild(editBtn);
+
+ document.querySelectorAll(".mood-popover").forEach(el=>el.remove());
+
+ const pop=document.createElement("div");
+ pop.className="mood-popover";
+
+ const m=moodOf(d.mood);
+ const title=document.createElement("div");
+ title.style.fontWeight="600";
+ title.textContent=(m.e||"💭")+" "+(m.t||"Настроение");
+
+ const date=document.createElement("div");
+ date.style.cssText="font-size:12px;opacity:.7;margin-top:3px";
+ date.textContent=fmt(parseKey(k),{day:"numeric",month:"long",year:"numeric"});
+
+ pop.append(title,date);
+
+ if(d.note){
+  const note=document.createElement("div");
+  note.className="mood-popover-note";
+  note.textContent=d.note;
+  pop.append(note);
  }
- editBtn.style.display=canEdit?"block":"none";
- editBtn.onclick=()=>{
-  $("moodChoices").style.display="";
-  $("modalNote").readOnly=false;
-  $("modalNote").style.display="block";
-  $("saveDay").style.display="";
-  $("modalTitle").textContent="Настроение и заметка";
-  editBtn.style.display="none";
+
+ if(canEdit){
+  const actions=document.createElement("div");
+  actions.className="mood-popover-actions";
+  const edit=document.createElement("button");
+  edit.type="button";
+  edit.textContent="Изменить";
+  edit.onclick=()=>{
+   pop.remove();
+   openMood(k);
+  };
+  actions.append(edit);
+  pop.append(actions);
+ }
+
+ document.body.append(pop);
+
+ const r=anchor?anchor.getBoundingClientRect():null;
+ const w=pop.offsetWidth;
+ const h=pop.offsetHeight;
+ let left=r?r.left:12;
+ let top=r?r.bottom+6:12;
+
+ left=Math.max(12,Math.min(left,window.innerWidth-w-12));
+ if(top+h>window.innerHeight-12){
+  top=r?Math.max(12,r.top-h-6):12;
+ }
+ pop.style.left=left+"px";
+ pop.style.top=top+"px";
+
+ const close=e=>{
+  if(!pop.contains(e.target)&&e.target!==anchor){
+   pop.remove();
+   document.removeEventListener("click",close,true);
+  }
  };
- $("moodModal").classList.add("open");
+ setTimeout(()=>document.addEventListener("click",close,true),0);
 }
+
 
 function renderMoodChoices(){
  $("moodChoices").innerHTML=moods.map((m,i)=>`<button class="mood-choice ${selectedMood===i+1?"selected":""}" data-choice="${i+1}" title="${m.t}">${m.e}<small>${m.t}</small></button>`).join("")+
