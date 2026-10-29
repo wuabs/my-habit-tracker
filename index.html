@@ -37,8 +37,8 @@ h1{font-family:Georgia,serif;font-size:27px;font-weight:normal;margin:0}
 .btn{border:0;background:#748768;color:white;padding:10px 13px;border-radius:10px}
 .btn.light{background:#eeeee5;color:var(--ink)}
 .month-picker{background:var(--paper);border:1px solid var(--line);padding:9px;border-radius:10px;max-width:165px}
-.top-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:11px;margin-bottom:14px}
-.stat,.panel{background:var(--paper);border:1px solid var(--line);border-radius:17px;padding:15px;min-width:0}
+.top-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.stat,.panel{background:var(--paper);border:1px solid var(--line);border-radius:17px;padding:10px;min-width:0}
 .stat{min-height:94px;position:relative}
 .stat .label{font-size:11px;color:var(--muted)}
 .stat .number{font-size:26px;margin-top:10px}
@@ -89,11 +89,11 @@ input[type=text],textarea,select,input[type=time],input[type=month]{background:#
 .week-box{background:#f6f4ed;border-radius:10px;padding:10px}
 .week-box strong{display:block;font-size:17px;font-weight:500;margin:5px 0}
 .week-box span{font-size:10px;color:var(--muted)}
-.two-charts{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:720px;width:100%;margin:0 auto 16px}
-.donut-wrap{display:flex;align-items:center;gap:12px}
-.donut{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;flex:none;position:relative}
-.donut:after{content:"";width:51px;height:51px;border-radius:50%;background:var(--paper);position:absolute}
-.donut strong{position:relative;z-index:1;font-size:15px;font-weight:500}
+.two-charts{display:contents}
+.donut-wrap{display:flex;align-items:center;gap:6px;min-width:0}
+.donut{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;flex:none;position:relative}
+.donut:after{content:"";width:37px;height:37px;border-radius:50%;background:var(--paper);position:absolute}
+.donut strong{position:relative;z-index:1;font-size:12px;font-weight:500}
 .bloom{text-align:center;background:#edf0e5}
 .bloom-plant{font-size:54px;margin:8px 0}
 .bloom p{line-height:1.6;color:#777d6e;font-size:11px}
@@ -198,9 +198,7 @@ textarea{width:100%;resize:vertical;min-height:95px}
  <div class="stat" style="background:#fbf4f1"><span class="emoji">🌷</span><div class="label">В выбранном месяце</div><div class="number" id="daysStat">0</div><div class="hint">дней с отметками</div></div>
  <div class="stat" style="background:#f1f5f5"><span class="emoji">💭</span><div class="label">Настроение</div><div class="number" id="moodStat">—</div><div class="hint" id="moodHint">за выбранный месяц</div></div>
  <div class="stat" style="background:#faf5e7"><span class="emoji">🌅</span><div class="label">Пробуждение</div><div class="number" id="wakeStat">—</div><div class="hint">среднее за месяц</div></div>
-</section>
-
-<div class="two-charts">
+ 
   <section class="panel">
    <h3 class="panel-title">Weekly balance</h3>
    <div class="donut-wrap"><div class="donut" id="weekDonut"><strong id="weekDonutText">0%</strong></div><div><div>Привычки за неделю</div><p class="muted" id="weekDonutHint">Каждый шаг имеет значение.</p></div></div>
@@ -209,7 +207,10 @@ textarea{width:100%;resize:vertical;min-height:95px}
    <h3 class="panel-title">Monthly bloom</h3>
    <div class="donut-wrap"><div class="donut" id="monthDonut"><strong id="monthDonutText">0%</strong></div><div><div>Привычки за месяц</div><p class="muted" id="monthDonutHint">Начни с одного шага.</p></div></div>
   </section>
-</div>
+ 
+</section>
+
+
 <div class="layout">
 <aside class="column left-col">
  <section class="panel">
