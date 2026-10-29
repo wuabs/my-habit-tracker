@@ -439,7 +439,12 @@ function render(){
  // weekly percentage is shown in the donut chart
  $("daysStat").textContent=keys.filter(k=>count(k)>0||day(k).mood||day(k).wake||day(k).note.trim()).length;
  const moodsThis=keys.filter(k=>day(k).mood).map(k=>day(k).mood);
- const avgMood=moodsThis.length?Math.round(moodsThis.reduce((a,b)=>a+b,0)/moodsThis.length):0;
+ const avgMood=moodsThis.length
+ ? Number(moodsThis.reduce((best,mood,_,arr)=>
+    arr.filter(v=>v===mood).length>
+    arr.filter(v=>v===best).length?mood:best
+   ,moodsThis[0]))
+ : 0;
  $("moodStat").textContent=avgMood?moodOf(avgMood).e:"—";
  $("moodHint").textContent=moodsThis.length?moodsThis.length+" дней с настроением":"нет записей";
  $("wakeStat").textContent=timeText(avgWake(keys));
