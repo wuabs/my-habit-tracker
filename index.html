@@ -330,6 +330,7 @@ function load(){
    const x=JSON.parse(raw);
    if(x&&Array.isArray(x.habits)&&x.days&&typeof x.days==="object"){
     if(!x.habits.length)x.habits=defaultHabits;
+    
     Object.values(x.days).forEach(d=>{
      if(!d.checks)d.checks={};
      if(d.mood===undefined)d.mood=0;
@@ -337,6 +338,18 @@ function load(){
      if(d.wake===undefined)d.wake="";
      if(!d.wake&&d.sleepEnd)d.wake=d.sleepEnd;
     });
+
+    if(!x.habitVersions||typeof x.habitVersions!=="object"){
+     const months=Object.keys(x.days)
+      .filter(k=>/^\d{4}-\d{2}-\d{2}$/.test(k))
+      .map(k=>k.slice(0,7))
+      .sort();
+     const startMonth=months[0]||keyOf(now).slice(0,7);
+     x.habitVersions={
+      [startMonth]:x.habits.map(h=>({...h}))
+     };
+    }
+
     return x;
    }
   }
