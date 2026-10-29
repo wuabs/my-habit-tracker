@@ -213,7 +213,7 @@ textarea{width:100%;resize:vertical;min-height:95px}
 
 <section class="top-stats">
  <div class="stat" style="background:#fbf4f1"><span class="emoji">🌷</span><div class="label">В выбранном месяце</div><div class="number" id="daysStat">0</div><div class="hint">дней с отметками</div></div>
- <div class="stat" style="background:#f1f5f5"><span class="emoji">💭</span><div class="label">Настроение</div><div class="number" id="moodStat">—</div><div class="hint" id="moodHint">за выбранный месяц</div></div>
+ <div class="stat" style="background:#f1f5f5"><span class="emoji">💭</span><div class="label">Настроение месяца</div><div class="number" id="moodStat">—</div><div class="hint" id="moodHint">за выбранный месяц</div></div>
  <div class="stat" style="background:#faf5e7"><span class="emoji">🌅</span><div class="label">Пробуждение</div><div class="number" id="wakeStat">—</div><div class="hint">среднее за месяц</div></div>
  
   <section class="panel">
@@ -446,7 +446,8 @@ function render(){
    ,moodsThis[0]))
  : 0;
  $("moodStat").textContent=avgMood?moodOf(avgMood).e:"—";
- $("moodHint").textContent=moodsThis.length?moodsThis.length+" дней с настроением":"нет записей";
+ const moodCount=moodsThis.filter(m=>m===avgMood).length;
+ $("moodHint").textContent=avgMood?moodCount+" дн. с этим настроением":"нет записей";
  $("wakeStat").textContent=timeText(avgWake(keys));
  $("weekDonutText").textContent=pct(wc,wp)+"%";
  $("weekDonut").style.background=`conic-gradient(#9fb68e ${pct(wc,wp)}%,#f0eee7 0)`;
