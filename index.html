@@ -195,7 +195,6 @@ textarea{width:100%;resize:vertical;min-height:95px}
 </header>
 
 <section class="top-stats">
- 
  <div class="stat" style="background:#fbf4f1"><span class="emoji">🌷</span><div class="label">В выбранном месяце</div><div class="number" id="daysStat">0</div><div class="hint">дней с отметками</div></div>
  <div class="stat" style="background:#f1f5f5"><span class="emoji">💭</span><div class="label">Настроение</div><div class="number" id="moodStat">—</div><div class="hint" id="moodHint">за выбранный месяц</div></div>
  <div class="stat" style="background:#faf5e7"><span class="emoji">🌅</span><div class="label">Пробуждение</div><div class="number" id="wakeStat">—</div><div class="hint">среднее за месяц</div></div>
@@ -210,8 +209,7 @@ textarea{width:100%;resize:vertical;min-height:95px}
    <h3 class="panel-title">Monthly bloom</h3>
    <div class="donut-wrap"><div class="donut" id="monthDonut"><strong id="monthDonutText">0%</strong></div><div><div>Привычки за месяц</div><p class="muted" id="monthDonutHint">Начни с одного шага.</p></div></div>
   </section>
- </div>
-  
+</div>
 <div class="layout">
 <aside class="column left-col">
  <section class="panel">
@@ -400,9 +398,9 @@ function render(){
  $("monthTitle").textContent=selected.toLocaleDateString("ru-RU",{month:"long",year:"numeric"});
  const habits=habitsForMonth(selected);
  const keys=monthKeys(selected),total=keys.reduce((s,k)=>s+count(k),0),possible=keys.length*habits.length;
- $("monthlyStat").textContent=pct(total,possible)+"%";
+ // monthly percentage is shown in the donut chart
  const wk=weekKeys(now),wc=wk.reduce((s,k)=>s+count(k),0);
- $("weeklyStat").textContent=pct(wc,7*data.length)+"%";
+ // weekly percentage is shown in the donut chart
  $("daysStat").textContent=keys.filter(k=>count(k)>0||day(k).mood||day(k).wake||day(k).note.trim()).length;
  const moodsThis=keys.filter(k=>day(k).mood).map(k=>day(k).mood);
  const avgMood=moodsThis.length?Math.round(moodsThis.reduce((a,b)=>a+b,0)/moodsThis.length):0;
