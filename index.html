@@ -396,7 +396,10 @@ function renderCalendar(){
   el.onblur=()=>{if(/^\d:\d{2}$/.test(el.value)){el.value="0"+el.value;el.dispatchEvent(new Event("change"))}};
  });
  $("calendar").querySelectorAll("[data-mood-date]").forEach(el=>{
-  el.onclick=()=>previewMood(el.dataset.moodDate,true);
+  el.onclick=e=>{
+   e.stopPropagation();
+   previewMood(el.dataset.moodDate,true,el);
+  };
   el.onmouseenter=()=>{if(el.title)el.setAttribute("aria-label",el.title)};
  });
 }
