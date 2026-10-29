@@ -236,6 +236,7 @@ textarea{width:100%;resize:vertical;min-height:95px}
   <h3 class="panel-title">My little rituals</h3>
   <div class="small-title">ТВОИ ПРИВЫЧКИ</div>
   <div id="habitList"></div>
+  <div id="habitsProgress"></div>
   <div class="add-row"><input id="newHabit" type="text" maxlength="45" placeholder="Новая привычка…"><button id="addHabit">+</button></div>
   <p class="muted">Нажми на название привычки, чтобы изменить его. Отметки сохраняются по датам.</p>
  </section>
@@ -277,10 +278,7 @@ textarea{width:100%;resize:vertical;min-height:95px}
   <p id="bloomText">Отметь первую привычку, чтобы вырастить свой сад.</p>
   <div class="progress"><span id="bloomProgress" style="width:0%"></span></div>
  </section>
- <section class="panel">
-  <h3 class="panel-title">Monthly overview</h3>
-  <div id="monthlyOverview"></div>
- </section>
+ 
  <section class="panel">
   <h3 class="panel-title">Mood garden</h3>
   <div id="moodHistory" style="display:flex;gap:5px;flex-wrap:wrap"></div>
@@ -553,9 +551,20 @@ function renderWeekSummary(){
 function renderOverview(){
  const keys=monthKeys(selected);
  const habits=habitsForMonth(selected);
- $("monthlyOverview").innerHTML=habits.length?habits.map(h=>{
-  const a=keys.filter(k=>day(k).checks[h.id]).length,p=pct(a,keys.length);
-  return `<div class="overview-item"><div style="display:flex;justify-content:space-between;gap:6px"><span><span style="color:${h.color}">●</span> ${escapeHtml(h.name)}</span><span class="muted">${p}%</span></div><div class="bar-mini"><span style="width:${p}%;background:${h.color}"></span></div></div>`;
+
+ $("habitsProgress").innerHTML=habits.length?habits.map(h=>{
+  const a=keys.filter(k=>day(k).checks[h.id]).length;
+  const p=pct(a,keys.length);
+
+  return `<div class="overview-item">
+   <div style="display:flex;justify-content:space-between;gap:6px">
+    <span><span style="color:${h.color}">●</span> ${escapeHtml(h.name)}</span>
+    <span class="muted">${p}%</span>
+   </div>
+   <div class="bar-mini">
+    <span style="width:${p}%;background:${h.color}"></span>
+   </div>
+  </div>`;
  }).join(""):'<p class="muted">Добавь привычки, чтобы увидеть статистику.</p>';
 }
 
