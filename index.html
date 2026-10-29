@@ -452,7 +452,7 @@ function render(){
  const todayKey=keyOf(now),todayDone=completion(todayKey);
  const totalHabits=habitsForMonth(now).length;
  $("bloomProgress").style.width=todayDone+"%";
- $("bloomPlant").textContent=todayDone===100&&totalHabits?"🌸":todayDone>=50?"🌷":todayDone>0?"🌿":"🌱";
+ $("bloomPlant").textContent=todayDone===100&&totalHabits?"🌻":todayDone>=50?"🪷":todayDone>0?"🌿":"🌱";
  $("bloomTitle").textContent=todayDone===100&&totalHabits?"Ты сегодня расцвела!":todayDone>0?"Твой сад растёт":"Всё начинается с малого";
  $("bloomText").textContent=`Сегодня выполнено ${count(todayKey)} из ${totalHabits} привычек.`;
  renderHabits();renderCalendar();renderChart();renderWeekSummary();renderOverview();renderMoodHistory();
