@@ -718,7 +718,19 @@ $("newHabit").addEventListener("keydown",e=>{if(e.key==="Enter")$("addHabit").cl
 $("prevMonth").onclick=()=>{selected=new Date(selected.getFullYear(),selected.getMonth()-1,1);render()};
 $("nextMonth").onclick=()=>{selected=new Date(selected.getFullYear(),selected.getMonth()+1,1);render()};
 $("monthPicker").onchange=()=>{if($("monthPicker").value){const [y,m]=$("monthPicker").value.split("-").map(Number);selected=new Date(y,m-1,1);render()}};
-$("todayBtn").onclick=()=>{selected=new Date(now.getFullYear(),now.getMonth(),1);render();window.scrollTo({top:0,behavior:"smooth"})};
+$("todayBtn").onclick=()=>{
+ selected=new Date(now.getFullYear(),now.getMonth(),1);
+ render();
+
+ setTimeout(()=>{
+  const todayCell=document.querySelector("#calendar .today, #calendar .today-head");
+  if(todayCell){
+   todayCell.scrollIntoView({behavior:"smooth",block:"center"});
+  }else{
+   window.scrollTo({top:0,behavior:"smooth"});
+  }
+ },100);
+};
 $("closeModal").onclick=()=>$("moodModal").classList.remove("open");
 $("moodModal").addEventListener("click",e=>{if(e.target===$("moodModal"))$("moodModal").classList.remove("open")});
 $("saveDay").onclick=saveMood;
