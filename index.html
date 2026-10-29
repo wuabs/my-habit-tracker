@@ -286,11 +286,10 @@ textarea{width:100%;resize:vertical;min-height:95px}
  
 <section class="panel">
   <h3 class="panel-title">Заметка на сегодня</h3>
+  <input id="dailyNoteDate" type="date" style="width:100%;box-sizing:border-box;margin-bottom:10px">
   <textarea id="dailyNote" placeholder="Запиши свои мысли, события или идеи..." rows="6" style="width:100%;box-sizing:border-box;resize:vertical"></textarea>
   <p class="muted" id="dailyNoteStatus">Заметка за выбранный день.</p>
 </section>
-</aside>
-</div>
 
 
 <div class="footer">Bloom & Balance · Your own pace is the right pace 🌿 · Регулярно сохраняй резервную копию</div>
@@ -392,9 +391,17 @@ function habitsForMonth(date){
 
 function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){alert("Не удалось сохранить данные в браузере. Сделай резервную копию и проверь свободное место.")}}
  $("dailyNote").addEventListener("input",()=>{
-  const d=day(keyOf(selected));
-  d.journalNote=$("dailyNote").value;
- save();
+  const k=$("dailyNoteDate").value;
+  if(!k)return;
+  day(k).journalNote=$("dailyNote").value;
+  save();
+ });
+
+ $("dailyNoteDate").addEventListener("change",()=>{
+  const k=$("dailyNoteDate").value;
+  if(!k)return;
+  $("dailyNote").value=day(k).journalNote||"";
+  $("dailyNoteStatus").textContent="Заметка за "+k;
  });
  $("clearMonth").onclick=()=>{
  const month=keyOf(selected).slice(0,7);
@@ -468,7 +475,8 @@ function render(){
  $("bloomPlant").textContent=todayDone===100&&totalHabits?"🌻":todayDone>=50?"🪷":todayDone>0?"🌿":"🌱";
  $("bloomTitle").textContent=todayDone===100&&totalHabits?"Ты сегодня расцвела!":todayDone>0?"Твой сад растёт":"Всё начинается с малого";
  $("bloomText").textContent=`Сегодня выполнено ${count(todayKey)} из ${totalHabits} привычек.`;
- $("dailyNote").value=day(keyOf(selected)).journalNote||"";
+ if(!$("dailyNoteDate").value)$("dailyNoteDate").value=keyOf(now);
+ $("dailyNote").value=day($("dailyNoteDate").value).journalNote||"";
  renderHabits();renderCalendar();renderChart();renderWeekSummary();renderOverview();renderMoodHistory();
 }
 function renderHabits(){
@@ -732,9 +740,11 @@ function renderNotes(){
 
  $("noteList").querySelectorAll("[data-note-date]").forEach(b=>{
   b.onclick=()=>{
-   selected=parseKey(b.dataset.noteDate);
+   const k=b.dataset.noteDate;
    $("historyModal").classList.remove("open");
-   render();
+   $("dailyNoteDate").value=k;
+   $("dailyNote").value=day(k).journalNote||"";
+   $("dailyNoteStatus").textContent="Заметка за "+k;
    $("dailyNote").focus();
   };
  });
