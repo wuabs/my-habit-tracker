@@ -475,7 +475,10 @@ function renderOverview(){
 function renderMoodHistory(){
  const keys=monthKeys(selected).filter(k=>day(k).mood);
  $("moodHistory").innerHTML=keys.length?keys.map(k=>`<button class="mood-cell" style="width:auto;height:auto;padding:7px" data-open-date="${k}" title="${k}: ${moodOf(day(k).mood).t}${day(k).note?" — "+day(k).note:""}">${moodOf(day(k).mood).e}<small style="display:block;font-size:9px">${Number(k.slice(-2))}</small></button>`).join(""):'<span class="muted">Отметь настроение в календаре — здесь появится история.</span>';
- $("moodHistory").querySelectorAll("[data-open-date]").forEach(b=>b.onclick=()=>previewMood(b.dataset.openDate,false));
+ $("moodHistory").querySelectorAll("[data-open-date]").forEach(b=>b.onclick=e=>{
+  e.stopPropagation();
+  previewMood(b.dataset.openDate,false,b);
+ });
 }
 
 function openMood(k){
