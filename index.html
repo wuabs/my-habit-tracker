@@ -429,7 +429,22 @@ function renderHabits(){
    const keys=monthKeys(selected),p=pct(keys.filter(k=>day(k).checks[h.id]).length,keys.length);
    const row=document.createElement("div");row.className="habit-item";
    row.innerHTML=`<span class="dot" style="background:${h.color}"></span><span class="name" title="Нажми, чтобы переименовать">${escapeHtml(h.name)}</span><span class="muted">${p}%</span><button class="delete" title="Удалить привычку">×</button>`;
-   row.querySelector(".name").onclick=()=>{const v=prompt("Новое название привычки:",h.name);if(v&&v.trim()){h.name=v.trim();save();render()}};
+   
+   row.querySelector(".name").onclick=()=>{
+    const v=prompt("Новое название привычки:",h.name);
+    if(v&&v.trim()){
+     const month=keyOf(selected).slice(0,7);
+     const updated=habitsForMonth(selected).map(x=>({...x}));
+     const target=updated.find(x=>x.id===h.id);
+     if(!target)return;
+     target.name=v.trim();
+     data.habitVersions[month]=updated;
+     data.habits=updated.map(x=>({...x}));
+     save();
+     render();
+    }
+   };
+
    row.querySelector(".delete").onclick=()=>{if(confirm(`Удалить привычку «${h.name}» и её отметки?`)){data.habits=data.habits.filter(x=>x.id!==h.id);Object.values(data.days).forEach(d=>delete d.checks[h.id]);save();render()}};
    $("habitList").append(row);
   });
