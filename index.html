@@ -285,10 +285,9 @@ textarea{width:100%;resize:vertical;min-height:95px}
  
  
 <section class="panel">
-  <h3 class="panel-title">Заметка на сегодня</h3>
-  <input id="dailyNoteDate" type="date" style="width:100%;box-sizing:border-box;margin-bottom:10px">
+  <h3 class="panel-title" id="dailyNoteTitle">Заметка на сегодня</h3>
   <textarea id="dailyNote" placeholder="Запиши свои мысли, события или идеи..." rows="6" style="width:100%;box-sizing:border-box;resize:vertical"></textarea>
-  <p class="muted" id="dailyNoteStatus">Заметка за выбранный день.</p>
+  <p class="muted" id="dailyNoteStatus">Заметка за сегодня.</p>
 </section>
 
 
@@ -342,6 +341,7 @@ const parseKey=k=>new Date(k+"T12:00:00");
 const fmt=(d,o)=>d.toLocaleDateString("ru-RU",o);
 const pct=(a,b)=>b?Math.round(a/b*100):0;
 let selected=new Date(now.getFullYear(),now.getMonth(),1);
+let journalDate=keyOf(now);
 let modalDate=keyOf(now), selectedMood=0;
 let data=load();
 
@@ -391,12 +391,11 @@ function habitsForMonth(date){
 
 function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){alert("Не удалось сохранить данные в браузере. Сделай резервную копию и проверь свободное место.")}}
  $("dailyNote").addEventListener("input",()=>{
-  const k=$("dailyNoteDate").value;
+  const k=journalDate;
   if(!k)return;
   day(k).journalNote=$("dailyNote").value;
   save();
  });
-
  $("dailyNoteDate").addEventListener("change",()=>{
   const k=$("dailyNoteDate").value;
   if(!k)return;
@@ -475,8 +474,8 @@ function render(){
  $("bloomPlant").textContent=todayDone===100&&totalHabits?"🌻":todayDone>=50?"🪷":todayDone>0?"🌿":"🌱";
  $("bloomTitle").textContent=todayDone===100&&totalHabits?"Ты сегодня расцвела!":todayDone>0?"Твой сад растёт":"Всё начинается с малого";
  $("bloomText").textContent=`Сегодня выполнено ${count(todayKey)} из ${totalHabits} привычек.`;
- if(!$("dailyNoteDate").value)$("dailyNoteDate").value=keyOf(now);
- $("dailyNote").value=day($("dailyNoteDate").value).journalNote||"";
+ $("dailyNote").value=day(journalDate).journalNote||"";
+ $("dailyNoteStatus").textContent="Заметка за "+journalDate;
  renderHabits();renderCalendar();renderChart();renderWeekSummary();renderOverview();renderMoodHistory();
 }
 function renderHabits(){
@@ -530,7 +529,7 @@ function renderHabits(){
 function renderCalendar(){
  const n=daysInMonth(selected),todayKey=keyOf(now),firstDow=(new Date(selected.getFullYear(),selected.getMonth(),1).getDay()+6)%7;
  let html="<thead><tr><th>Трекер</th>";
- for(let i=1;i<=n;i++){const k=keyOf(new Date(selected.getFullYear(),selected.getMonth(),i));html+=`<th class="${k===todayKey?"today-head":""}"><div class="daynum">${i}</div></th>`}
+ for(let i=1;i<=n;i++){const k=keyOf(new Date(selected.getFullYear(),selected.getMonth(),i));html+=`<th class="${k===todayKey?"today-head":""}"><button type="button" class="daynum" data-journal-date="${k}">${i}</button></th>`}
  html+="</tr></thead><tbody><tr class='week-row'><td>НЕДЕЛЯ</td>";
  for(let i=1;i<=n;i++){const dow=(firstDow+i-1)%7;html+=`<td>${dow===0||i===1?"W"+Math.ceil((firstDow+i)/7):""}</td>`}
  html+="</tr>";
@@ -549,6 +548,14 @@ function renderCalendar(){
   html+=`<td><button class="mood-cell ${d.note?"has-note":""} ${k===todayKey?"today":""}" data-mood-date="${k}" title="${escapeHtml(tip)}" aria-label="Настроение и заметка за ${k}">${m?m.e:"＋"}</button></td>`;
  }
  html+="</tr></tbody>";$("calendar").innerHTML=html;
+ $("calendar").querySelectorAll("[data-journal-date]").forEach(el=>{
+  el.onclick=()=>{
+    journalDate=el.dataset.journalDate;
+    $("dailyNote").value=day(journalDate).journalNote||"";
+    $("dailyNoteStatus").textContent="Заметка за "+journalDate;
+    $("dailyNote").focus();
+  };
+ });
  $("calendar").querySelectorAll(".cell-check").forEach(el=>{
   const toggle=()=>{const d=day(el.dataset.date);d.checks[el.dataset.habit]=!d.checks[el.dataset.habit];save();render()};
   el.onclick=toggle;el.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();toggle()}};
@@ -611,7 +618,7 @@ function renderMoodHistory(){
 
 function openMood(k){
  modalDate=k;selectedMood=day(k).mood||0;
- $("modalTitle").textContent="Настроение и заметка";
+ $("modalTitle").textContent="Настроение";
  $("modalDate").textContent=fmt(parseKey(k),{weekday:"long",day:"numeric",month:"long",year:"numeric"});
  $("modalNote").value=day(k).note||"";
  $("moodChoices").style.display="";
@@ -741,10 +748,10 @@ function renderNotes(){
  $("noteList").querySelectorAll("[data-note-date]").forEach(b=>{
   b.onclick=()=>{
    const k=b.dataset.noteDate;
+   journalDate=k;
+   selected=parseKey(k);
    $("historyModal").classList.remove("open");
-   $("dailyNoteDate").value=k;
-   $("dailyNote").value=day(k).journalNote||"";
-   $("dailyNoteStatus").textContent="Заметка за "+k;
+   render();
    $("dailyNote").focus();
   };
  });
@@ -774,6 +781,7 @@ $("nextMonth").onclick=()=>{selected=new Date(selected.getFullYear(),selected.ge
 $("monthPicker").onchange=()=>{if($("monthPicker").value){const [y,m]=$("monthPicker").value.split("-").map(Number);selected=new Date(y,m-1,1);render()}};
 $("todayBtn").onclick=()=>{
  selected=new Date(now.getFullYear(),now.getMonth(),1);
+ journalDate=keyOf(now);
  render();
 
  setTimeout(()=>{
