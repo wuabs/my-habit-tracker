@@ -195,13 +195,23 @@ textarea{width:100%;resize:vertical;min-height:95px}
 </header>
 
 <section class="top-stats">
- <div class="stat"><span class="emoji">🌿</span><div class="label">Привычки за месяц</div><div class="number" id="monthlyStat">0%</div><div class="hint">выполненные отметки</div></div>
- <div class="stat" style="background:#f3f5ed"><span class="emoji">🌼</span><div class="label">За неделю</div><div class="number" id="weeklyStat">0%</div><div class="hint">выполнение привычек</div></div>
+ 
  <div class="stat" style="background:#fbf4f1"><span class="emoji">🌷</span><div class="label">В выбранном месяце</div><div class="number" id="daysStat">0</div><div class="hint">дней с отметками</div></div>
  <div class="stat" style="background:#f1f5f5"><span class="emoji">💭</span><div class="label">Настроение</div><div class="number" id="moodStat">—</div><div class="hint" id="moodHint">за выбранный месяц</div></div>
  <div class="stat" style="background:#faf5e7"><span class="emoji">🌅</span><div class="label">Пробуждение</div><div class="number" id="wakeStat">—</div><div class="hint">среднее за месяц</div></div>
 </section>
 
+<div class="two-charts">
+  <section class="panel">
+   <h3 class="panel-title">Weekly balance</h3>
+   <div class="donut-wrap"><div class="donut" id="weekDonut"><strong id="weekDonutText">0%</strong></div><div><div>Привычки за неделю</div><p class="muted" id="weekDonutHint">Каждый шаг имеет значение.</p></div></div>
+  </section>
+  <section class="panel">
+   <h3 class="panel-title">Monthly bloom</h3>
+   <div class="donut-wrap"><div class="donut" id="monthDonut"><strong id="monthDonutText">0%</strong></div><div><div>Привычки за месяц</div><p class="muted" id="monthDonutHint">Начни с одного шага.</p></div></div>
+  </section>
+ </div>
+  
 <div class="layout">
 <aside class="column left-col">
  <section class="panel">
@@ -238,16 +248,7 @@ textarea{width:100%;resize:vertical;min-height:95px}
   <div class="chart-labels" id="chartLabels"></div>
  </section>
 
- <div class="two-charts">
-  <section class="panel">
-   <h3 class="panel-title">Weekly balance</h3>
-   <div class="donut-wrap"><div class="donut" id="weekDonut"><strong id="weekDonutText">0%</strong></div><div><div>Привычки за неделю</div><p class="muted" id="weekDonutHint">Каждый шаг имеет значение.</p></div></div>
-  </section>
-  <section class="panel">
-   <h3 class="panel-title">Monthly bloom</h3>
-   <div class="donut-wrap"><div class="donut" id="monthDonut"><strong id="monthDonutText">0%</strong></div><div><div>Привычки за месяц</div><p class="muted" id="monthDonutHint">Начни с одного шага.</p></div></div>
-  </section>
- </div>
+ 
 </main>
 
 <aside class="column right-col">
