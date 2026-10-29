@@ -138,6 +138,43 @@ textarea{width:100%;resize:vertical;min-height:95px}
  .header-actions{width:100%}
  .month-picker{flex:1}
 }
+
+.mood-popover {
+  position: fixed;
+  z-index: 10000;
+  width: min(260px, calc(100vw - 24px));
+  box-sizing: border-box;
+  padding: 14px;
+  background: #fffdf9;
+  color: #38352f;
+  border: 1px solid #e8e1d6;
+  border-radius: 14px;
+  box-shadow: 0 6px 24px rgba(50, 40, 25, 0.16);
+  font-size: 14px;
+  line-height: 1.45;
+}
+.mood-popover-note {
+  margin-top: 9px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 180px;
+  overflow-y: auto;
+}
+.mood-popover-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+.mood-popover-actions button {
+  border: 0;
+  border-radius: 8px;
+  padding: 7px 12px;
+  background: #eee8dc;
+  color: #38352f;
+  font: inherit;
+  cursor: pointer;
+}
+
 </style>
 </head>
 <body>
