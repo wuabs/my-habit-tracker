@@ -396,12 +396,7 @@ function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){aler
   day(k).journalNote=$("dailyNote").value;
   save();
  });
- $("dailyNoteDate").addEventListener("change",()=>{
-  const k=$("dailyNoteDate").value;
-  if(!k)return;
-  $("dailyNote").value=day(k).journalNote||"";
-  $("dailyNoteStatus").textContent="Заметка за "+k;
- });
+
  $("clearMonth").onclick=()=>{
  const month=keyOf(selected).slice(0,7);
 
