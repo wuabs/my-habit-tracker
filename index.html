@@ -415,14 +415,15 @@ function render(){
 function renderHabits(){
  $("habitList").innerHTML="";
  if(!data.habits.length)$("habitList").innerHTML='<p class="muted">Добавь первую привычку ниже.</p>';
- data.habits.forEach(h=>{
-  const keys=monthKeys(selected),p=pct(keys.filter(k=>day(k).checks[h.id]).length,keys.length);
-  const row=document.createElement("div");row.className="habit-item";
-  row.innerHTML=`<span class="dot" style="background:${h.color}"></span><span class="name" title="Нажми, чтобы переименовать">${escapeHtml(h.name)}</span><span class="muted">${p}%</span><button class="delete" title="Удалить привычку">×</button>`;
-  row.querySelector(".name").onclick=()=>{const v=prompt("Новое название привычки:",h.name);if(v&&v.trim()){h.name=v.trim();save();render()}};
-  row.querySelector(".delete").onclick=()=>{if(confirm(`Удалить привычку «${h.name}» и её отметки?`)){data.habits=data.habits.filter(x=>x.id!==h.id);Object.values(data.days).forEach(d=>delete d.checks[h.id]);save();render()}};
-  $("habitList").append(row);
- });
+ const habits=habitsForMonth(selected);
+  habits.forEach(h=>{
+   const keys=monthKeys(selected),p=pct(keys.filter(k=>day(k).checks[h.id]).length,keys.length);
+   const row=document.createElement("div");row.className="habit-item";
+   row.innerHTML=`<span class="dot" style="background:${h.color}"></span><span class="name" title="Нажми, чтобы переименовать">${escapeHtml(h.name)}</span><span class="muted">${p}%</span><button class="delete" title="Удалить привычку">×</button>`;
+   row.querySelector(".name").onclick=()=>{const v=prompt("Новое название привычки:",h.name);if(v&&v.trim()){h.name=v.trim();save();render()}};
+   row.querySelector(".delete").onclick=()=>{if(confirm(`Удалить привычку «${h.name}» и её отметки?`)){data.habits=data.habits.filter(x=>x.id!==h.id);Object.values(data.days).forEach(d=>delete d.checks[h.id]);save();render()}};
+   $("habitList").append(row);
+  });
 }
 function renderCalendar(){
  const n=daysInMonth(selected),todayKey=keyOf(now),firstDow=(new Date(selected.getFullYear(),selected.getMonth(),1).getDay()+6)%7;
@@ -431,11 +432,12 @@ function renderCalendar(){
  html+="</tr></thead><tbody><tr class='week-row'><td>НЕДЕЛЯ</td>";
  for(let i=1;i<=n;i++){const dow=(firstDow+i-1)%7;html+=`<td>${dow===0||i===1?"W"+Math.ceil((firstDow+i)/7):""}</td>`}
  html+="</tr>";
- data.habits.forEach(h=>{
-  html+=`<tr><td class="habit-name"><span style="color:${h.color}">●</span> ${escapeHtml(h.name)}</td>`;
-  for(let i=1;i<=n;i++){const k=keyOf(new Date(selected.getFullYear(),selected.getMonth(),i)),done=!!day(k).checks[h.id];html+=`<td><span class="cell-check ${done?"done":""} ${k===todayKey?"today":""}" role="checkbox" tabindex="0" aria-checked="${done}" data-habit="${h.id}" data-date="${k}">${done?"✓":"·"}</span></td>`}
-  html+="</tr>";
- });
+ const habits=habitsForMonth(selected);
+  habits.forEach(h=>{
+   html+=`<tr><td class="habit-name"><span style="color:${h.color}">●</span> ${escapeHtml(h.name)}</td>`;
+   for(let i=1;i<=n;i++){const k=keyOf(new Date(selected.getFullYear(),selected.getMonth(),i)),done=!!day(k).checks[h.id];html+=`<td><span class="cell-check ${done?"done":""} ${k===todayKey?"today":""}" role="checkbox" tabindex="0" aria-checked="${done}" data-habit="${h.id}" data-date="${k}">${done?"✓":"·"}</span></td>`}
+   html+="</tr>";
+  });
  html+='<tr class="special-row"><td class="habit-name">🌅 Пробуждение</td>';
  for(let i=1;i<=n;i++){const k=keyOf(new Date(selected.getFullYear(),selected.getMonth(),i));html+=`<td><input class="time-cell" type="text" inputmode="numeric" maxlength="5" placeholder="—" aria-label="Время пробуждения ${k}" title="Введи время, например 7:30" value="${escapeHtml(day(k).wake||"")}" data-wake="${k}"></td>`}
  html+="</tr><tr class='special-row'><td class='habit-name'>💭 Настроение</td>";
