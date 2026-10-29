@@ -445,7 +445,20 @@ function renderHabits(){
     }
    };
 
-   row.querySelector(".delete").onclick=()=>{if(confirm(`Удалить привычку «${h.name}» и её отметки?`)){data.habits=data.habits.filter(x=>x.id!==h.id);Object.values(data.days).forEach(d=>delete d.checks[h.id]);save();render()}};
+   
+   row.querySelector(".delete").onclick=()=>{
+    if(confirm(`Убрать привычку «${h.name}» из этого месяца и последующих?`)){
+     const month=keyOf(selected).slice(0,7);
+     const updated=habitsForMonth(selected)
+     .filter(x=>x.id!==h.id)
+     .map(x=>({...x}));
+     data.habitVersions[month]=updated;
+     data.habits=updated.map(x=>({...x}));
+     save();
+     render();
+    }
+   };
+
    $("habitList").append(row);
   });
 }
