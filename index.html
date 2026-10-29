@@ -450,10 +450,11 @@ function render(){
  $("monthDonut").style.background=`conic-gradient(#e6c9c9 ${pct(total,possible)}%,#f0eee7 0)`;
  $("monthDonutHint").textContent=total?total+" выполнений за месяц":"Начни с одного маленького шага.";
  const todayKey=keyOf(now),todayDone=completion(todayKey);
+ const totalHabits=habitsForMonth(now).length;
  $("bloomProgress").style.width=todayDone+"%";
- $("bloomPlant").textContent=todayDone===100&&data.length?"🌸":todayDone>=50?"🌷":todayDone>0?"🌿":"🌱";
- $("bloomTitle").textContent=todayDone===100&&data.length?"Ты сегодня расцвела!":todayDone>0?"Твой сад растёт":"Всё начинается с малого";
- $("bloomText").textContent=`Сегодня выполнено ${count(todayKey)} из ${data.length} привычек.`;
+ $("bloomPlant").textContent=todayDone===100&&totalHabits?"🌸":todayDone>=50?"🌷":todayDone>0?"🌿":"🌱";
+ $("bloomTitle").textContent=todayDone===100&&totalHabits?"Ты сегодня расцвела!":todayDone>0?"Твой сад растёт":"Всё начинается с малого";
+ $("bloomText").textContent=`Сегодня выполнено ${count(todayKey)} из ${totalHabits} привычек.`;
  renderHabits();renderCalendar();renderChart();renderWeekSummary();renderOverview();renderMoodHistory();
 }
 function renderHabits(){
