@@ -246,7 +246,11 @@ textarea{width:100%;resize:vertical;min-height:95px}
  <section class="panel">
   <div class="month-head">
    <div><h2>Habit Tracker</h2><div class="subtitle" id="monthTitle">Месяц</div></div>
-   <div class="month-nav"><button id="prevMonth" aria-label="Предыдущий месяц">‹</button><button id="nextMonth" aria-label="Следующий месяц">›</button></div>
+   <div class="month-nav">
+    <button id="prevMonth" aria-label="Предыдущий месяц">‹</button>
+    <button id="nextMonth" aria-label="Следующий месяц">›</button>
+    <button id="clearMonth" title="Очистить выбранный месяц">🗑️</button>
+   </div>
   </div>
   <div class="legend">
    <span><i style="background:#cbd9b9"></i> Выполнено</span>
@@ -385,6 +389,20 @@ function habitsForMonth(date){
 }
 
 function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){alert("Не удалось сохранить данные в браузере. Сделай резервную копию и проверь свободное место.")}}
+$("clearMonth").onclick=()=>{
+ const month=keyOf(selected).slice(0,7);
+
+ if(!confirm(`Очистить все отметки, настроение, заметки и время пробуждения за ${month}? Сами привычки останутся.`))return;
+
+ Object.keys(data.days).forEach(k=>{
+  if(k.startsWith(month+"-")){
+   delete data.days[k];
+  }
+ });
+
+ save();
+ render();
+};
 function day(k){
  if(!data.days[k])data.days[k]={checks:{},mood:0,note:"",wake:""};
  const d=data.days[k];if(!d.checks)d.checks={};
