@@ -38,12 +38,18 @@ h1{font-family:Georgia,serif;font-size:27px;font-weight:normal;margin:0}
 .btn.light{background:#eeeee5;color:var(--ink)}
 .month-picker{background:var(--paper);border:1px solid var(--line);padding:9px;border-radius:10px;max-width:165px}
 .top-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-bottom:14px}
-.stat,.panel{background:var(--paper);border:1px solid var(--line);border-radius:17px;padding:10px;min-width:0}
+.stat,.panel{background:var(--paper);border:1px solid var(--line);border-radius:17px;padding:10px;min-width:0;position:relative}
 .stat{min-height:94px;position:relative}
 .stat .label,.panel .label{font-size:11px;color:var(--muted);font-weight:400}
 .stat .number{font-size:26px;margin-top:10px}
 .stat .hint{font-size:10px;color:var(--muted);margin-top:4px}
-.stat .emoji{position:absolute;right:13px;top:12px;font-size:20px}
+.stat .emoji,
+.panel .emoji{
+  position:absolute;
+  right:13px;
+  top:12px;
+  font-size:20px;
+}
 .layout{display:grid;grid-template-columns:220px minmax(0,1fr) 245px;gap:13px;align-items:start}
 .column{display:flex;flex-direction:column;gap:13px;min-width:0}
 .panel-title{font-family:Georgia,serif;font-size:17px;font-weight:normal;margin:0 0 12px}
