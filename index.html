@@ -54,7 +54,7 @@ h1{font-family:Georgia,serif;font-size:27px;font-weight:normal;margin:0}
 .column{display:flex;flex-direction:column;gap:13px;min-width:0}
 .panel-title{font-family:Georgia,serif;font-size:17px;font-weight:normal;margin:0 0 12px}
 .small-title{font-size:10px;color:var(--muted);margin-bottom:10px;letter-spacing:.3px}
-.habit-item{display:flex;align-items:center;gap:7px;margin:12px 0}
+.habit-item{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:12px 0}
 .habit-item .name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
 .dot{width:9px;height:9px;border-radius:50%;flex:none}
 .muted{color:var(--muted);font-size:11px;line-height:1.55}
@@ -450,7 +450,7 @@ function renderHabits(){
     <span class="name" title="Нажми, чтобы переименовать">${escapeHtml(h.name)}</span>
     <span class="muted">${p}%</span>
     <button class="delete" title="Удалить привычку">×</button>
-    <div class="bar-mini" style="grid-column:1/-1">
+    <div class="bar-mini" style="width:100%;flex-basis:100%">
      <span style="width:${p}%;background:${h.color}"></span>
     </div>
 `   ;
