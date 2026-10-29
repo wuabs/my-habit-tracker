@@ -379,8 +379,16 @@ function daysInMonth(d){return new Date(d.getFullYear(),d.getMonth()+1,0).getDat
 function monthKeys(d){return Array.from({length:daysInMonth(d)},(_,i)=>keyOf(new Date(d.getFullYear(),d.getMonth(),i+1)))}
 function weekStart(d){const x=new Date(d);x.setDate(x.getDate()-((x.getDay()+6)%7));x.setHours(12,0,0,0);return x}
 function weekKeys(d){const s=weekStart(d);return Array.from({length:7},(_,i)=>{const x=new Date(s);x.setDate(s.getDate()+i);return keyOf(x)})}
-function count(k){return data.habits.filter(h=>day(k).checks[h.id]).length}
-function completion(k){return pct(count(k),data.habits.length)}
+
+function count(k){
+ const habits=habitsForMonth(parseKey(k));
+ return habits.filter(h=>day(k).checks[h.id]).length;
+}
+function completion(k){
+ const habits=habitsForMonth(parseKey(k));
+ return pct(count(k),habits.length);
+}
+
 function moodOf(n){return moods[n-1]||null}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function minutes(k){const v=day(k).wake;if(!v||!/^\d{2}:\d{2}$/.test(v))return null;const [h,m]=v.split(":").map(Number);return h*60+m}
