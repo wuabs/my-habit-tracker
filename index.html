@@ -630,10 +630,24 @@ function renderNotes(){
  $("noteList").innerHTML=keys.length?keys.map(k=>`<div class="note-entry"><button data-note-date="${k}"><strong>${fmt(parseKey(k),{day:"numeric",month:"long",year:"numeric"})} ${day(k).mood?moodOf(day(k).mood).e:""}</strong><p style="margin:7px 0 0;white-space:pre-wrap">${escapeHtml(day(k).note)}</p></button></div>`).join(""):'<p class="muted">Заметок за выбранный период пока нет.</p>';
  $("noteList").querySelectorAll("[data-note-date]").forEach(b=>b.onclick=()=>{$("historyModal").classList.remove("open");openMood(b.dataset.noteDate)});
 }
+
 $("addHabit").onclick=()=>{
- const input=$("newHabit"),name=input.value.trim();if(!name)return;
- data.habits.push({id:"h"+Date.now(),name,color:colors[data.habits.length%colors.length]});input.value="";save();render();
+ const input=$("newHabit"),name=input.value.trim();
+ if(!name)return;
+ const habits=habitsForMonth(selected).map(h=>({...h}));
+ habits.push({
+  id:"h"+Date.now(),
+  name,
+  color:colors[habits.length%colors.length]
+ });
+ const month=keyOf(selected).slice(0,7);
+ data.habitVersions[month]=habits;
+ data.habits=habits.map(h=>({...h}));
+ input.value="";
+ save();
+ render();
 };
+
 $("newHabit").addEventListener("keydown",e=>{if(e.key==="Enter")$("addHabit").click()});
 $("prevMonth").onclick=()=>{selected=new Date(selected.getFullYear(),selected.getMonth()-1,1);render()};
 $("nextMonth").onclick=()=>{selected=new Date(selected.getFullYear(),selected.getMonth()+1,1);render()};
