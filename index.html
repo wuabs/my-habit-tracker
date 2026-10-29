@@ -356,6 +356,17 @@ function load(){
  }catch(e){}
  return {habits:defaultHabits.map(h=>({...h})),days:{}};
 }
+
+function habitsForMonth(date){
+ const versions=data.habitVersions||{};
+ const target=keyOf(new Date(date.getFullYear(),date.getMonth(),1)).slice(0,7);
+ const month=Object.keys(versions)
+  .filter(m=>m<=target)
+  .sort()
+  .pop();
+ return month?versions[month]:data.habits;
+}
+
 function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){alert("Не удалось сохранить данные в браузере. Сделай резервную копию и проверь свободное место.")}}
 function day(k){
  if(!data.days[k])data.days[k]={checks:{},mood:0,note:"",wake:""};
