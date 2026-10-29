@@ -400,7 +400,7 @@ function render(){
  const habits=habitsForMonth(selected);
  const keys=monthKeys(selected),total=keys.reduce((s,k)=>s+count(k),0),possible=keys.length*habits.length;
  // monthly percentage is shown in the donut chart
- const wk=weekKeys(now),wc=wk.reduce((s,k)=>s+count(k),0);
+ const wk=weekKeys(now),wc=wk.reduce((s,k)=>s+count(k),0),wp=wk.reduce((s,k)=>s+habitsForMonth(parseKey(k)).length,0);
  // weekly percentage is shown in the donut chart
  $("daysStat").textContent=keys.filter(k=>count(k)>0||day(k).mood||day(k).wake||day(k).note.trim()).length;
  const moodsThis=keys.filter(k=>day(k).mood).map(k=>day(k).mood);
@@ -408,8 +408,8 @@ function render(){
  $("moodStat").textContent=avgMood?moodOf(avgMood).e:"—";
  $("moodHint").textContent=moodsThis.length?moodsThis.length+" дней с настроением":"нет записей";
  $("wakeStat").textContent=timeText(avgWake(keys));
- $("weekDonutText").textContent=pct(wc,7*data.length)+"%";
- $("weekDonut").style.background=`conic-gradient(#9fb68e ${pct(wc,7*data.length)}%,#f0eee7 0)`;
+ $("weekDonutText").textContent=pct(wc,wp)+"%";
+ $("weekDonut").style.background=`conic-gradient(#9fb68e ${pct(wc,wp)}%,#f0eee7 0)`;
  $("weekDonutHint").textContent=wc?wc+" выполнений за текущую неделю":"Начни в своём темпе.";
  $("monthDonutText").textContent=pct(total,possible)+"%";
  $("monthDonut").style.background=`conic-gradient(#e6c9c9 ${pct(total,possible)}%,#f0eee7 0)`;
