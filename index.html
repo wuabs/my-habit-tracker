@@ -397,27 +397,28 @@ function timeText(n){if(n===null)return"—";return `${String(Math.floor(n/60)).
 function render(){
  $("monthPicker").value=`${selected.getFullYear()}-${String(selected.getMonth()+1).padStart(2,"0")}`;
  $("monthTitle").textContent=selected.toLocaleDateString("ru-RU",{month:"long",year:"numeric"});
- const keys=monthKeys(selected),total=keys.reduce((s,k)=>s+count(k),0),possible=keys.length*data.habits.length;
+ const habits=habitsForMonth(selected);
+ const keys=monthKeys(selected),total=keys.reduce((s,k)=>s+count(k),0),possible=keys.length*habits.length;
  $("monthlyStat").textContent=pct(total,possible)+"%";
  const wk=weekKeys(now),wc=wk.reduce((s,k)=>s+count(k),0);
- $("weeklyStat").textContent=pct(wc,7*data.habits.length)+"%";
+ $("weeklyStat").textContent=pct(wc,7*data.length)+"%";
  $("daysStat").textContent=keys.filter(k=>count(k)>0||day(k).mood||day(k).wake||day(k).note.trim()).length;
  const moodsThis=keys.filter(k=>day(k).mood).map(k=>day(k).mood);
  const avgMood=moodsThis.length?Math.round(moodsThis.reduce((a,b)=>a+b,0)/moodsThis.length):0;
  $("moodStat").textContent=avgMood?moodOf(avgMood).e:"—";
  $("moodHint").textContent=moodsThis.length?moodsThis.length+" дней с настроением":"нет записей";
  $("wakeStat").textContent=timeText(avgWake(keys));
- $("weekDonutText").textContent=pct(wc,7*data.habits.length)+"%";
- $("weekDonut").style.background=`conic-gradient(#9fb68e ${pct(wc,7*data.habits.length)}%,#f0eee7 0)`;
+ $("weekDonutText").textContent=pct(wc,7*data.length)+"%";
+ $("weekDonut").style.background=`conic-gradient(#9fb68e ${pct(wc,7*data.length)}%,#f0eee7 0)`;
  $("weekDonutHint").textContent=wc?wc+" выполнений за текущую неделю":"Начни в своём темпе.";
  $("monthDonutText").textContent=pct(total,possible)+"%";
  $("monthDonut").style.background=`conic-gradient(#e6c9c9 ${pct(total,possible)}%,#f0eee7 0)`;
  $("monthDonutHint").textContent=total?total+" выполнений за месяц":"Начни с одного маленького шага.";
  const todayKey=keyOf(now),todayDone=completion(todayKey);
  $("bloomProgress").style.width=todayDone+"%";
- $("bloomPlant").textContent=todayDone===100&&data.habits.length?"🌸":todayDone>=50?"🌷":todayDone>0?"🌿":"🌱";
- $("bloomTitle").textContent=todayDone===100&&data.habits.length?"Ты сегодня расцвела!":todayDone>0?"Твой сад растёт":"Всё начинается с малого";
- $("bloomText").textContent=`Сегодня выполнено ${count(todayKey)} из ${data.habits.length} привычек.`;
+ $("bloomPlant").textContent=todayDone===100&&data.length?"🌸":todayDone>=50?"🌷":todayDone>0?"🌿":"🌱";
+ $("bloomTitle").textContent=todayDone===100&&data.length?"Ты сегодня расцвела!":todayDone>0?"Твой сад растёт":"Всё начинается с малого";
+ $("bloomText").textContent=`Сегодня выполнено ${count(todayKey)} из ${data.length} привычек.`;
  renderHabits();renderCalendar();renderChart();renderWeekSummary();renderOverview();renderMoodHistory();
 }
 function renderHabits(){
@@ -499,13 +500,16 @@ function renderWeekSummary(){
  }
  $("weekSummary").innerHTML=html;
 }
+
 function renderOverview(){
  const keys=monthKeys(selected);
- $("monthlyOverview").innerHTML=data.habits.length?data.habits.map(h=>{
+ const habits=habitsForMonth(selected);
+ $("monthlyOverview").innerHTML=habits.length?habits.map(h=>{
   const a=keys.filter(k=>day(k).checks[h.id]).length,p=pct(a,keys.length);
   return `<div class="overview-item"><div style="display:flex;justify-content:space-between;gap:6px"><span><span style="color:${h.color}">●</span> ${escapeHtml(h.name)}</span><span class="muted">${p}%</span></div><div class="bar-mini"><span style="width:${p}%;background:${h.color}"></span></div></div>`;
  }).join(""):'<p class="muted">Добавь привычки, чтобы увидеть статистику.</p>';
 }
+
 function renderMoodHistory(){
  const keys=monthKeys(selected).filter(k=>day(k).mood);
  $("moodHistory").innerHTML=keys.length?keys.map(k=>`<button class="mood-cell" style="width:auto;height:auto;padding:7px" data-open-date="${k}" title="${k}: ${moodOf(day(k).mood).t}${day(k).note?" — "+day(k).note:""}">${moodOf(day(k).mood).e}<small style="display:block;font-size:9px">${Number(k.slice(-2))}</small></button>`).join(""):'<span class="muted">Отметь настроение в календаре — здесь появится история.</span>';
