@@ -481,7 +481,8 @@ function renderStatsOnly(){
 }
 function renderChart(){
  const n=daysInMonth(selected),vals=Array.from({length:n},(_,i)=>count(keyOf(new Date(selected.getFullYear(),selected.getMonth(),i+1))));
- const w=700,h=145,left=25,right=12,top=10,bottom=15,hh=h-top-bottom,ww=w-left-right,max=Math.max(1,data.habits.length);
+ const habits=habitsForMonth(selected);
+ const w=700,h=145,left=25,right=12,top=10,bottom=15,hh=h-top-bottom,ww=w-left-right,max=Math.max(1,habits.length);
  let s="";
  for(let i=0;i<=4;i++){let y=top+hh*i/4;s+=`<line x1="${left}" y1="${y}" x2="${w-right}" y2="${y}" stroke="#eeece5"/>`}
  s+=`<polyline points="${vals.map((v,i)=>`${left+(n===1?0:i*ww/(n-1))},${top+hh-(v/max)*hh}`).join(" ")}" fill="none" stroke="#94aa83" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
@@ -491,11 +492,12 @@ function renderChart(){
  $("chartLabels").innerHTML=labels.map(x=>`<span>${x} ${fmt(new Date(selected.getFullYear(),selected.getMonth(),x),{month:"short"})}</span>`).join("");
 }
 function renderWeekSummary(){
+ const habits=habitsForMonth(selected);
  const n=daysInMonth(selected),firstDow=(new Date(selected.getFullYear(),selected.getMonth(),1).getDay()+6)%7;
  const numWeeks=Math.ceil((n+firstDow)/7);let html="";
  for(let w=0;w<numWeeks;w++){
   const ks=monthKeys(selected).filter(k=>{const d=parseKey(k);return Math.floor((d.getDate()-1+firstDow)/7)===w});
-  const a=ks.reduce((s,k)=>s+count(k),0),b=ks.length*data.habits.length;
+  const a=ks.reduce((s,k)=>s+count(k),0),b=ks.length*habits.length;
   html+=`<div class="week-box"><span>НЕДЕЛЯ ${w+1}</span><strong>${pct(a,b)}%</strong><span>${a} выполнений</span></div>`;
  }
  $("weekSummary").innerHTML=html;
