@@ -592,7 +592,6 @@ function renderNotes(){
 }
 $("addHabit").onclick=()=>{
  const input=$("newHabit"),name=input.value.trim();if(!name)return;
- if(data.habits.length>=12){alert("Можно добавить до 12 привычек, чтобы календарь оставался удобным.");return}
  data.habits.push({id:"h"+Date.now(),name,color:colors[data.habits.length%colors.length]});input.value="";save();render();
 };
 $("newHabit").addEventListener("keydown",e=>{if(e.key==="Enter")$("addHabit").click()});
