@@ -561,6 +561,13 @@ function previewMood(k, canEdit, anchor){
   }
  };
  setTimeout(()=>document.addEventListener("click",close,true),0);
+ const closeOnScroll=()=>{
+  pop.remove();
+  document.removeEventListener("scroll",closeOnScroll,true);
+  window.removeEventListener("resize",closeOnScroll);
+ };
+ document.addEventListener("scroll",closeOnScroll,true);
+ window.addEventListener("resize",closeOnScroll);
 }
 
 
