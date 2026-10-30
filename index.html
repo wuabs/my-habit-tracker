@@ -245,7 +245,7 @@ textarea{width:100%;resize:vertical;min-height:95px}
 <main class="column">
  <section class="panel">
   <div class="month-head">
-   <div><h2>Habit Tracker</h2><div class="subtitle" id="monthTitle">Месяц</div></div>
+   <div><h2>Rituals tracker</h2><div class="subtitle" id="monthTitle">Месяц</div></div>
    <div class="month-nav">
     <button id="prevMonth" aria-label="Предыдущий месяц">‹</button>
     <button id="nextMonth" aria-label="Следующий месяц">›</button>
@@ -473,7 +473,7 @@ function renderHabits(){
    row.innerHTML=`
     <span class="dot" style="background:${h.color}"></span>
     <span class="name" title="Нажми, чтобы переименовать">${escapeHtml(h.name)}</span>
-    <span class="muted">${p}%</span>
+    <span class="muted">${keys.filter(k=>day(k).checks[h.id]).length} / ${keys.length}</span>
     <button class="delete" title="Удалить привычку">×</button>
     <div class="bar-mini" style="width:100%;flex-basis:100%">
      <span style="width:${p}%;background:${h.color}"></span>
