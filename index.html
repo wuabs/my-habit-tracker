@@ -276,7 +276,7 @@ textarea{width:100%;resize:vertical;min-height:95px}
 
 <aside class="column right-col">
  <section class="panel bloom">
-  <h3 class="panel-title">Today's bloom</h3>
+  <h3 class="panel-title">Today's activity</h3>
   <div class="bloom-plant" id="bloomPlant">🌱</div>
   <div style="font-family:Georgia,serif;font-size:17px" id="bloomTitle">Всё начинается с малого</div>
   <p id="bloomText">Отметь первую привычку, чтобы вырастить свой сад.</p>
@@ -458,8 +458,8 @@ function render(){
  const todayKey=keyOf(now),todayDone=completion(todayKey);
  const totalHabits=habitsForMonth(now).length;
  $("bloomProgress").style.width=todayDone+"%";
- $("bloomPlant").textContent=todayDone===100&&totalHabits?"🌻":todayDone>=50?"🪷":todayDone>0?"🌿":"🌱";
- $("bloomTitle").textContent=todayDone===100&&totalHabits?"Ты сегодня расцвела!":todayDone>0?"Твой сад растёт":"Всё начинается с малого";
+ $("bloomPlant").textContent=todayDone>=50?"🔥":todayDone>=50?"🪷":todayDone>0?"🌿":"🌱";
+ $("bloomTitle").textContent=todayDone>=50?"Хватит! Остаеовись!":todayDone>=30?"Баланс продуктивности":todayDone>0?"Умеренные шаги - залог успеха":"Всё начинается с малого";
  $("bloomText").textContent=`Сегодня выполнено ${count(todayKey)} из ${totalHabits} привычек.`;
  renderHabits();renderCalendar();renderChart();renderWeekSummary();renderOverview();renderMoodHistory();
 }
