@@ -155,7 +155,52 @@ textarea{width:100%;resize:vertical;min-height:95px}
  .header-actions{width:100%}
  .month-picker{flex:1}
 }
+/* Планшет: вертикальная ориентация */
+@media (orientation: portrait) and (min-width: 701px) and (max-width: 1100px) {
+  .top-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 
+  #activitySlot {
+    min-width: 0;
+  }
+
+  #activitySlot:empty {
+    display: none;
+  }
+
+  #activityPanel {
+    height: 100%;
+    box-sizing: border-box;
+  }
+
+  .right-col {
+    display: none;
+  }
+
+  .lower-panels {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 13px;
+    width: 100%;
+  }
+}
+
+/* Планшет: горизонтальная ориентация */
+@media (orientation: landscape) and (min-width: 701px) and (max-width: 1100px) {
+  .layout {
+    grid-template-columns: 220px minmax(0, 1fr) 245px;
+  }
+
+  .right-col {
+    grid-column: auto;
+    display: flex;
+  }
+
+  .top-stats {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
 .mood-popover {
   position: fixed;
   z-index: 10000;
@@ -210,8 +255,8 @@ textarea{width:100%;resize:vertical;min-height:95px}
   <input id="importFile" type="file" accept=".json,application/json" hidden>
  </div>
 </header>
-
 <section class="top-stats">
+ <div id="activitySlot"></div>
  <div class="stat" style="background:#fbf4f1"><span class="emoji">🌷</span><div class="label">В выбранном месяце</div><div class="number" id="daysStat">0</div><div class="hint">дней с отметками</div></div>
  <div class="stat" style="background:#f1f5f5"><span class="emoji">💭</span><div class="label">Настроение месяца</div><div class="number" id="moodStat">—</div><div class="hint" id="moodHint">за выбранный месяц</div></div>
  <div class="stat" style="background:#faf5e7"><span class="emoji">🌅</span><div class="label">Пробуждение</div><div class="number" id="wakeStat">—</div><div class="hint">среднее за месяц</div></div>
@@ -261,8 +306,8 @@ textarea{width:100%;resize:vertical;min-height:95px}
   <div class="muted" style="margin-top:10px">Нажми на ячейку с галочкой, чтобы отметить привычку. В строке пробуждения введи время. Нажми на смайлик, чтобы изменить настроение.</div>
   <div class="week-summary" id="weekSummary"></div>
  </section>
-
- <section class="panel">
+ <div id="lowerPanels" class="lower-panels"></div>
+ <section class="panel" id="progressPanel">
   <div class="section-row" style="display:flex;justify-content:space-between;gap:8px;align-items:center">
    <div><h3 class="panel-title" style="margin-bottom:4px">Your progress</h3><div class="small-title">ВЫПОЛНЕННЫЕ ПРИВЫЧКИ ПО ДНЯМ</div></div>
    <span style="font-size:22px">🌳</span>
@@ -275,7 +320,7 @@ textarea{width:100%;resize:vertical;min-height:95px}
 </main>
 
 <aside class="column right-col">
- <section class="panel bloom">
+ <section class="panel bloom" id="activityPanel">
   <h3 class="panel-title">Today's activity</h3>
   <div class="bloom-plant" id="bloomPlant">🌱</div>
   <div style="font-family:Georgia,serif;font-size:17px" id="bloomTitle">Всё начинается с малого</div>
@@ -283,7 +328,7 @@ textarea{width:100%;resize:vertical;min-height:95px}
   <div class="progress"><span id="bloomProgress" style="width:0%"></span></div>
  </section>
  
- <section class="panel">
+ <section class="panel" id="moodPanel">
   <h3 class="panel-title">Mood garden</h3>
   <div id="moodHistory" style="display:flex;gap:5px;flex-wrap:wrap"></div>
   <p class="muted">Нажми на любой смайлик, чтобы открыть запись этого дня.</p>
@@ -758,6 +803,48 @@ $("importFile").onchange=async e=>{
   data={habits:imported.habits,days:imported.days};save();render();alert("Данные импортированы.");
  }catch(err){alert("Не удалось прочитать файл. Выбери резервную копию Bloom & Balance в формате JSON.")}finally{e.target.value=""}
 };
+function arrangePanels(){
+ const panelHomes = {
+ activity: null,
+ mood: null,
+ progress: null
+};
+
+function arrangePanels(){
+ const activity=$("activityPanel");
+ const mood=$("moodPanel");
+ const progress=$("progressPanel");
+ const activitySlot=$("activitySlot");
+ const lowerPanels=$("lowerPanels");
+ const rightCol=document.querySelector(".right-col");
+
+ if(!activity||!mood||!progress||!activitySlot||!lowerPanels||!rightCol)return;
+
+ if(!panelHomes.activity){
+  panelHomes.activity=document.createComment("activity home");
+  activity.parentNode.insertBefore(panelHomes.activity,activity);
+
+  panelHomes.mood=document.createComment("mood home");
+  mood.parentNode.insertBefore(panelHomes.mood,mood);
+
+  panelHomes.progress=document.createComment("progress home");
+  progress.parentNode.insertBefore(panelHomes.progress,progress);
+ }
+
+ if(window.matchMedia("(orientation: portrait) and (min-width: 701px) and (max-width: 1100px)").matches){
+  activitySlot.appendChild(activity);
+  lowerPanels.appendChild(mood);
+  lowerPanels.appendChild(progress);
+ }else{
+  panelHomes.activity.parentNode.insertBefore(activity,panelHomes.activity.nextSibling);
+  panelHomes.mood.parentNode.insertBefore(mood,panelHomes.mood.nextSibling);
+  panelHomes.progress.parentNode.insertBefore(progress,panelHomes.progress.nextSibling);
+ }
+}
+
+window.addEventListener("resize",arrangePanels);
+window.addEventListener("orientationchange",arrangePanels);
+arrangePanels();
 render();
 })();
 </script>
