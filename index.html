@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -160,32 +159,40 @@ textarea{width:100%;resize:vertical;min-height:95px}
   .top-stats {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-
-  #activitySlot {
-    min-width: 0;
-  }
-
-  #activitySlot:empty {
-    display: none;
-  }
-
+  #activitySlot { display: contents; }
   #activityPanel {
-    height: 100%;
+    min-height: 94px;
+    height: 94px;
     box-sizing: border-box;
+    padding: 10px;
+    text-align: left;
+    overflow: hidden;
   }
-
-  .right-col {
-    display: none;
+  #activityPanel .panel-title {
+    font-family: inherit;
+    font-size: 11px;
+    color: var(--muted);
+    margin: 0;
+    font-weight: 400;
   }
-
-  .lower-panels {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 13px;
-    width: 100%;
+  #activityPanel .bloom-plant {
+    position: absolute;
+    top: 9px;
+    right: 10px;
+    font-size: 19px;
+    margin: 0;
   }
+  #activityPanel #bloomTitle {
+    font-family: inherit !important;
+    font-size: 17px !important;
+    margin-top: 10px;
+    line-height: 1.1;
+  }
+  #activityPanel #bloomText { display: none; }
+  #activityPanel .progress { margin-top: 7px; }
+  .right-col { display: none; }
+  #moodSlot { display: block; }
 }
-
 /* Планшет: горизонтальная ориентация */
 @media (orientation: landscape) and (min-width: 701px) and (max-width: 1100px) {
   .layout {
@@ -285,6 +292,7 @@ textarea{width:100%;resize:vertical;min-height:95px}
   <div class="add-row"><input id="newHabit" type="text" maxlength="45" placeholder="Новая привычка…"><button id="addHabit">+</button></div>
   <p class="muted">Нажми на название привычки, чтобы изменить его. Отметки сохраняются по датам.</p>
  </section>
+ <div id="moodSlot"></div>
 </aside>
 
 <main class="column">
@@ -306,7 +314,6 @@ textarea{width:100%;resize:vertical;min-height:95px}
   <div class="muted" style="margin-top:10px">Нажми на ячейку с галочкой, чтобы отметить привычку. В строке пробуждения введи время. Нажми на смайлик, чтобы изменить настроение.</div>
   <div class="week-summary" id="weekSummary"></div>
  </section>
- <div id="lowerPanels" class="lower-panels"></div>
  <section class="panel" id="progressPanel">
   <div class="section-row" style="display:flex;justify-content:space-between;gap:8px;align-items:center">
    <div><h3 class="panel-title" style="margin-bottom:4px">Your progress</h3><div class="small-title">ВЫПОЛНЕННЫЕ ПРИВЫЧКИ ПО ДНЯМ</div></div>
@@ -803,47 +810,36 @@ $("importFile").onchange=async e=>{
   data={habits:imported.habits,days:imported.days};save();render();alert("Данные импортированы.");
  }catch(err){alert("Не удалось прочитать файл. Выбери резервную копию Bloom & Balance в формате JSON.")}finally{e.target.value=""}
 };
-function arrangePanels(){
- const panelHomes = {
- activity: null,
- mood: null,
- progress: null
+const panelHomes = {
+ activity: document.createComment("activity home"),
+ mood: document.createComment("mood home")
 };
 
+const activityPanel = $("activityPanel");
+const moodPanel = $("moodPanel");
+
+// Save the original positions before moving either panel.
+activityPanel.parentNode.insertBefore(panelHomes.activity, activityPanel);
+moodPanel.parentNode.insertBefore(panelHomes.mood, moodPanel);
+
 function arrangePanels(){
- const activity=$("activityPanel");
- const mood=$("moodPanel");
- const progress=$("progressPanel");
  const activitySlot=$("activitySlot");
- const lowerPanels=$("lowerPanels");
- const rightCol=document.querySelector(".right-col");
+ const moodSlot=$("moodSlot");
+ const isPortraitTablet=window.matchMedia(
+  "(orientation: portrait) and (min-width: 701px) and (max-width: 1100px)"
+ ).matches;
 
- if(!activity||!mood||!progress||!activitySlot||!lowerPanels||!rightCol)return;
-
- if(!panelHomes.activity){
-  panelHomes.activity=document.createComment("activity home");
-  activity.parentNode.insertBefore(panelHomes.activity,activity);
-
-  panelHomes.mood=document.createComment("mood home");
-  mood.parentNode.insertBefore(panelHomes.mood,mood);
-
-  panelHomes.progress=document.createComment("progress home");
-  progress.parentNode.insertBefore(panelHomes.progress,progress);
- }
-
- if(window.matchMedia("(orientation: portrait) and (min-width: 701px) and (max-width: 1100px)").matches){
-  activitySlot.appendChild(activity);
-  lowerPanels.appendChild(mood);
-  lowerPanels.appendChild(progress);
+ if(isPortraitTablet){
+  activitySlot.appendChild(activityPanel);
+  moodSlot.appendChild(moodPanel);
  }else{
-  panelHomes.activity.parentNode.insertBefore(activity,panelHomes.activity.nextSibling);
-  panelHomes.mood.parentNode.insertBefore(mood,panelHomes.mood.nextSibling);
-  panelHomes.progress.parentNode.insertBefore(progress,panelHomes.progress.nextSibling);
+  panelHomes.activity.parentNode.insertBefore(activityPanel, panelHomes.activity.nextSibling);
+  panelHomes.mood.parentNode.insertBefore(moodPanel, panelHomes.mood.nextSibling);
  }
 }
 
-window.addEventListener("resize",arrangePanels);
-window.addEventListener("orientationchange",arrangePanels);
+window.addEventListener("resize", arrangePanels);
+window.addEventListener("orientationchange", arrangePanels);
 arrangePanels();
 render();
 })();
