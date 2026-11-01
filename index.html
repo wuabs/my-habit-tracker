@@ -394,8 +394,9 @@ const defaultHabits=[
  {id:"h5",name:"Уход за собой",color:colors[4]}
 ];
 const $=id=>document.getElementById(id);
-const now=new Date();
+let now=new Date();
 const keyOf=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+let lastTodayKey=keyOf(now);
 const parseKey=k=>new Date(k+"T12:00:00");
 const fmt=(d,o)=>d.toLocaleDateString("ru-RU",o);
 const pct=(a,b)=>b?Math.round(a/b*100):0;
@@ -488,6 +489,28 @@ function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":
 function minutes(k){const v=day(k).wake;if(!v||!/^\d{2}:\d{2}$/.test(v))return null;const [h,m]=v.split(":").map(Number);return h*60+m}
 function avgWake(keys){const a=keys.map(minutes).filter(v=>v!==null);if(!a.length)return null;return Math.round(a.reduce((s,v)=>s+v,0)/a.length)%1440}
 function timeText(n){if(n===null)return"—";return `${String(Math.floor(n/60)).padStart(2,"0")}:${String(n%60).padStart(2,"0")}`}
+function refreshCurrentDate(){
+ const freshNow=new Date();
+ const freshKey=keyOf(freshNow);
+
+ if(freshKey===lastTodayKey)return;
+
+ const wasShowingCurrentMonth =
+  selected.getFullYear()===now.getFullYear() &&
+  selected.getMonth()===now.getMonth();
+
+ now=freshNow;
+ lastTodayKey=freshKey;
+
+ // Если был открыт текущий месяц, переключаемся на новый.
+ // Если пользователь смотрел другой месяц, оставляем его открытым.
+ if(wasShowingCurrentMonth){
+  selected=new Date(now.getFullYear(),now.getMonth(),1);
+ }
+
+ render();
+}
+
 function render(){
  $("monthPicker").value=`${selected.getFullYear()}-${String(selected.getMonth()+1).padStart(2,"0")}`;
  $("monthTitle").textContent=selected.toLocaleDateString("ru-RU",{month:"long",year:"numeric"});
@@ -784,6 +807,8 @@ $("prevMonth").onclick=()=>{selected=new Date(selected.getFullYear(),selected.ge
 $("nextMonth").onclick=()=>{selected=new Date(selected.getFullYear(),selected.getMonth()+1,1);render()};
 $("monthPicker").onchange=()=>{if($("monthPicker").value){const [y,m]=$("monthPicker").value.split("-").map(Number);selected=new Date(y,m-1,1);render()}};
 $("todayBtn").onclick=()=>{
+ now=new Date();
+ lastTodayKey=keyOf(now);
  selected=new Date(now.getFullYear(),now.getMonth(),1);
  render();
 
@@ -847,6 +872,18 @@ function arrangePanels(){
 
 window.addEventListener("resize", arrangePanels);
 window.addEventListener("orientationchange", arrangePanels);
+
+// Проверяем дату при возвращении в приложение
+document.addEventListener("visibilitychange",()=>{
+ if(!document.hidden)refreshCurrentDate();
+});
+
+window.addEventListener("pageshow",refreshCurrentDate);
+window.addEventListener("focus",refreshCurrentDate);
+
+// Проверяем дату каждые 30 секунд
+setInterval(refreshCurrentDate,30000);
+
 arrangePanels();
 render();
 })();
