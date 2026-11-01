@@ -102,7 +102,7 @@ input[type=text],textarea,select,input[type=time],input[type=month]{background:#
 
 .week-box strong{
  display:inline;
- font-size:11px;
+ font-size:10px;
  font-weight:500;
  margin:0;
  white-space:nowrap;
@@ -116,36 +116,37 @@ input[type=text],textarea,select,input[type=time],input[type=month]{background:#
 .week-habit{
  display:flex;
  align-items:center;
- justify-content:space-between;
+ justify-content:flex-start;
  gap:6px;
  margin-top:7px;
  min-width:0;
+ width:100%;
 }
 
 .week-habit span:nth-child(2){
+ flex:1;
+ min-width:0;
  font-size:11px;
+ text-align:left;
+ white-space:nowrap;
  overflow:hidden;
  text-overflow:ellipsis;
- white-space:nowrap;
 }
 
 .week-habit strong{
+ display:block;
+ width:35px;
+ flex-shrink:0;
+ text-align:right;
  font-size:10px;
  color:var(--muted);
- flex-shrink:0;
-}
-.week-habit{
- display:grid;
- grid-template-columns:minmax(0,1fr) auto;
- align-items:center;
- text-align:left;
+ white-space:nowrap;
 }
 
-.week-habit span:nth-child(2){
- text-align:left;
- justify-self:start;
+.two-charts{
+ display:contents;
 }
-.two-charts{display:contents}
+
 .donut-wrap{display:flex;align-items:center;gap:6px;min-width:0;margin-top:8px}
 .donut{
   width:52px;
