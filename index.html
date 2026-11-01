@@ -418,12 +418,7 @@ textarea{width:100%;resize:vertical;min-height:95px}
    </div>
   </div>
 
-  <div class="legend">
-   <span><i style="background:#cbd9b9"></i> Выполнено</span>
-   <span><i style="background:#f3e4b6"></i> Сегодня</span>
-   <span>🌅 время пробуждения</span>
-   <span>💭 смайлик открывает описание настроения</span>
-  </div>
+  
 
   <div class="calendar-wrap">
    <table class="calendar" id="calendar"></table>
@@ -835,14 +830,6 @@ function renderCalendar(){
  html+="</tr></thead><tbody><tr class='week-row'><td>НЕДЕЛЯ</td>";
  for(let i=1;i<=n;i++){const dow=(firstDow+i-1)%7;html+=`<td>${dow===0||i===1?"W"+Math.ceil((firstDow+i)/7):""}</td>`}
  html+="</tr>";
- const habits=habitsForMonth(selected);
-  habits.forEach(h=>{
-   const completed=monthKeys(selected).filter(k=>day(k).checks[h.id]).length;
-   const goal=goalForHabit(h,selected);
-   html+=`<tr><td class="habit-name"><span style="color:${h.color}">●</span> ${escapeHtml(h.name)} <span class="habit-count">${completed}/${goal}</span></td>`;
-   for(let i=1;i<=n;i++){const k=keyOf(new Date(selected.getFullYear(),selected.getMonth(),i)),done=!!day(k).checks[h.id];html+=`<td><span class="cell-check ${done?"done":""} ${k===todayKey?"today":""}" role="checkbox" tabindex="0" aria-checked="${done}" data-habit="${h.id}" data-date="${k}">${done?"✓":"·"}</span></td>`}
-   html+="</tr>";
-  });
  html+='<tr class="special-row"><td class="habit-name">🌅 Пробуждение</td>';
  for(let i=1;i<=n;i++){const k=keyOf(new Date(selected.getFullYear(),selected.getMonth(),i));html+=`<td><input class="time-cell" type="text" inputmode="numeric" maxlength="5" placeholder="—" aria-label="Время пробуждения ${k}" title="Введи время, например 7:30" value="${escapeHtml(day(k).wake||"")}" data-wake="${k}"></td>`}
  html+="</tr><tr class='special-row'><td class='habit-name'>💭 Настроение</td>";
@@ -851,6 +838,15 @@ function renderCalendar(){
   const tip=(m?m.t:"Добавить настроение")+(d.note?" — "+d.note:"");
   html+=`<td><button class="mood-cell ${d.note?"has-note":""} ${k===todayKey?"today":""}" data-mood-date="${k}" title="${escapeHtml(tip)}" aria-label="Настроение и заметка за ${k}">${m?m.e:"＋"}</button></td>`;
  }
+ const habits=habitsForMonth(selected);
+  habits.forEach(h=>{
+   const completed=monthKeys(selected).filter(k=>day(k).checks[h.id]).length;
+   const goal=goalForHabit(h,selected);
+   html+=`<tr><td class="habit-name"><span style="color:${h.color}">●</span> ${escapeHtml(h.name)} <span class="habit-count">${completed}/${goal}</span></td>`;
+   for(let i=1;i<=n;i++){const k=keyOf(new Date(selected.getFullYear(),selected.getMonth(),i)),done=!!day(k).checks[h.id];html+=`<td><span class="cell-check ${done?"done":""} ${k===todayKey?"today":""}" role="checkbox" tabindex="0" aria-checked="${done}" data-habit="${h.id}" data-date="${k}">${done?"✓":"·"}</span></td>`}
+   html+="</tr>";
+  });
+ 
  html+="</tr></tbody>";$("calendar").innerHTML=html;
  $("calendar").querySelectorAll(".cell-check").forEach(el=>{
   const toggle=()=>{const d=day(el.dataset.date);d.checks[el.dataset.habit]=!d.checks[el.dataset.habit];save();render()};
