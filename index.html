@@ -35,6 +35,10 @@ h1{font-family:Georgia,serif;font-size:27px;font-weight:normal;margin:0}
 .header-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .btn{border:0;background:#748768;color:white;padding:10px 13px;border-radius:10px}
 .btn.light{background:#eeeee5;color:var(--ink)}
+.btn.purple{
+ background:#b7a4cf;
+ color:white;
+}
 .month-picker{background:var(--paper);border:1px solid var(--line);padding:9px;border-radius:10px;max-width:165px}
 .top-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-bottom:14px}
 .stat,.panel{background:var(--paper);border:1px solid var(--line);border-radius:17px;padding:10px;min-width:0;position:relative}
@@ -391,9 +395,9 @@ textarea{width:100%;resize:vertical;min-height:95px}
  </div>
  <div class="header-actions">
   <input class="month-picker" type="month" id="monthPicker" aria-label="Выбрать месяц">
-  <button class="btn light" id="todayBtn">Сегодня</button>
-  <button class="btn light" id="historyBtn">📖 Заметки</button>
-  <button class="btn" id="exportBtn">Резервная копия ↓</button>
+  <button class="btn" id="todayBtn">Сегодня</button>
+  <button class="btn purple" id="historyBtn">📖 Заметки</button>
+  <button class="btn light" id="exportBtn">Резервная копия ↓</button>
   <button class="btn light" id="importBtn">Импорт ↑</button>
   <input id="importFile" type="file" accept=".json,application/json" hidden>
  </div>
