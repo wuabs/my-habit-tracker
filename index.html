@@ -537,7 +537,29 @@ function render(){
  $("monthDonutText").textContent=pct(total,possible)+"%";
  $("monthDonut").style.background=`conic-gradient(#e6c9c9 ${pct(total,possible)}%,#f0eee7 0)`;
  $("monthDonutHint").textContent=total?total+" выполнений за месяц":"Начни с одного маленького шага.";
- const todayKey=keyOf(now),todayDone=completion(todayKey);
+ $("todayBtn").onclick=()=>{
+  now=new Date();
+  lastTodayKey=keyOf(now);
+  selected=new Date(now.getFullYear(),now.getMonth(),1);
+  render();
+
+  setTimeout(()=>{
+   const todayHead=document.querySelector("#calendar .today-head");
+
+   if(todayHead){
+    todayHead.scrollIntoView({
+     behavior:"smooth",
+     block:"nearest",
+     inline:"center"
+    });
+   }
+
+   $("calendar").scrollIntoView({
+    behavior:"smooth",
+    block:"start"
+   });
+  },150);
+ };
  const totalHabits=habitsForMonth(now).length;
  $("bloomProgress").style.width=todayDone+"%";
  $("bloomPlant").textContent=todayDone>=40?"🔥":todayDone>=30?"🪷":todayDone>0?"🌿":"🌱";
