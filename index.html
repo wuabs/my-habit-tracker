@@ -799,7 +799,7 @@ $("monthTopHabits").innerHTML=monthTop.length
  $("bloomPlant").textContent=todayDone>=40?"🔥":todayDone>=30?"🪷":todayDone>0?"🌿":"🌱";
  $("bloomTitle").textContent=todayDone>=40?"Хватит! Остановись!":todayDone>=30?"Баланс продуктивности":todayDone>0?"Умеренные шаги - залог успеха":"Всё начинается с малого";
  $("bloomText").textContent=`Сегодня выполнено ${count(todayKey)} из ${totalHabits} привычек.`;
- renderCalendar();renderChart();renderWeekSummary();renderOverview();renderMoodHistory();
+ renderCalendar();renderChart();renderWeekSummary();renderMoodHistory();
 }
 function renderHabits(){
  $("habitList").innerHTML="";
