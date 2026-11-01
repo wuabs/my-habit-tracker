@@ -512,6 +512,7 @@ function refreshCurrentDate(){
 }
 
 function render(){
+ const todayKey=keyOf(now),todayDone=completion(todayKey);
  $("monthPicker").value=`${selected.getFullYear()}-${String(selected.getMonth()+1).padStart(2,"0")}`;
  $("monthTitle").textContent=selected.toLocaleDateString("ru-RU",{month:"long",year:"numeric"});
  const habits=habitsForMonth(selected);
