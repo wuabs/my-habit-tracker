@@ -825,7 +825,7 @@ function renderHabits(){
 }
 function renderCalendar(){
  const n=daysInMonth(selected),todayKey=keyOf(now),firstDow=(new Date(selected.getFullYear(),selected.getMonth(),1).getDay()+6)%7;
- 
+ let html="<thead><tr><th></th>";
  for(let i=1;i<=n;i++){const k=keyOf(new Date(selected.getFullYear(),selected.getMonth(),i));html+=`<th class="${k===todayKey?"today-head":""}"><div class="daynum">${i}</div></th>`}
  html+="</tr></thead><tbody><tr class='week-row'><td>НЕДЕЛЯ</td>";
  for(let i=1;i<=n;i++){const dow=(firstDow+i-1)%7;html+=`<td>${dow===0||i===1?"W"+Math.ceil((firstDow+i)/7):""}</td>`}
