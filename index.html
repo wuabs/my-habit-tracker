@@ -84,6 +84,28 @@ input[type=text],textarea,select,input[type=time],input[type=month]{background:#
  white-space:nowrap;
  margin-left:4px;
 }
+.calendar .habit-title{
+ display:flex;
+ align-items:center;
+ flex-wrap:wrap;
+ gap:3px;
+}
+
+.calendar .habit-progress{
+ width:100%;
+ height:5px;
+ margin-top:5px;
+ background:var(--line);
+ border-radius:10px;
+ overflow:hidden;
+}
+
+.calendar .habit-progress span{
+ display:block;
+ height:100%;
+ border-radius:10px;
+ transition:width .25s ease;
+}
 .calendar .daynum{font-size:10px}
 .calendar .today-head{color:#5f8052;font-weight:bold}
 .calendar .week-row td{height:24px;background:#f5f3ec;color:#8b8d80;font-size:10px}
@@ -842,7 +864,16 @@ function renderCalendar(){
   habits.forEach(h=>{
    const completed=monthKeys(selected).filter(k=>day(k).checks[h.id]).length;
    const goal=goalForHabit(h,selected);
-   html+=`<tr><td class="habit-name"><span style="color:${h.color}">●</span> ${escapeHtml(h.name)} <span class="habit-count">${completed}/${goal}</span></td>`;
+   html+=`<tr><td class="habit-name">
+    <div class="habit-title">
+     <span style="color:${h.color}">●</span>
+     ${escapeHtml(h.name)}
+     <span class="habit-count">${completed}/${goal}</span>
+    </div>
+    <div class="habit-progress">
+     <span style="width:${Math.min(100,completed/goal*100)}%;background:${h.color}"></span>
+    </div>
+   </td>`;
    for(let i=1;i<=n;i++){const k=keyOf(new Date(selected.getFullYear(),selected.getMonth(),i)),done=!!day(k).checks[h.id];html+=`<td><span class="cell-check ${done?"done":""} ${k===todayKey?"today":""}" role="checkbox" tabindex="0" aria-checked="${done}" data-habit="${h.id}" data-date="${k}">${done?"✓":"·"}</span></td>`}
    html+="</tr>";
   });
