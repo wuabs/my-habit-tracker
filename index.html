@@ -134,6 +134,17 @@ input[type=text],textarea,select,input[type=time],input[type=month]{background:#
  color:var(--muted);
  flex-shrink:0;
 }
+.week-habit{
+ display:grid;
+ grid-template-columns:minmax(0,1fr) auto;
+ align-items:center;
+ text-align:left;
+}
+
+.week-habit span:nth-child(2){
+ text-align:left;
+ justify-self:start;
+}
 .two-charts{display:contents}
 .donut-wrap{display:flex;align-items:center;gap:6px;min-width:0;margin-top:8px}
 .donut{
