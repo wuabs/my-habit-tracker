@@ -91,9 +91,49 @@ input[type=text],textarea,select,input[type=time],input[type=month]{background:#
 .mood-cell.has-note{box-shadow:inset 0 -3px #d6c18d}
 .mood-cell.today{outline:1px solid #d4b98b}
 .week-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
-.week-box{background:#f6f4ed;border-radius:10px;padding:10px}
-.week-box strong{display:block;font-size:17px;font-weight:500;margin:5px 0}
-.week-box span{font-size:10px;color:var(--muted)}
+.week-box{
+ background:#f6f4ed;
+ border-radius:10px;
+ padding:10px;
+ min-width:0;
+ height:100%;
+ box-sizing:border-box;
+}
+
+.week-box strong{
+ display:inline;
+ font-size:11px;
+ font-weight:500;
+ margin:0;
+ white-space:nowrap;
+}
+
+.week-box>span{
+ font-size:10px;
+ color:var(--muted);
+}
+
+.week-habit{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:6px;
+ margin-top:7px;
+ min-width:0;
+}
+
+.week-habit span:nth-child(2){
+ font-size:11px;
+ overflow:hidden;
+ text-overflow:ellipsis;
+ white-space:nowrap;
+}
+
+.week-habit strong{
+ font-size:10px;
+ color:var(--muted);
+ flex-shrink:0;
+}
 .two-charts{display:contents}
 .donut-wrap{display:flex;align-items:center;gap:6px;min-width:0;margin-top:8px}
 .donut{
