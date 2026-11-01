@@ -49,7 +49,7 @@ h1{font-family:Georgia,serif;font-size:27px;font-weight:normal;margin:0}
   top:12px;
   font-size:20px;
 }
-.layout{display:grid;grid-template-columns:220px minmax(0,1fr) 245px;gap:13px;align-items:start}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 245px;gap:13px;align-items:start}
 .column{display:flex;flex-direction:column;gap:13px;min-width:0}
 .panel-title{font-family:Georgia,serif;font-size:17px;font-weight:normal;margin:0 0 12px}
 .small-title{font-size:10px;color:var(--muted);margin-bottom:10px;letter-spacing:.3px}
@@ -78,6 +78,12 @@ input[type=text],textarea,select,input[type=time],input[type=month]{background:#
 .calendar th:first-child,.calendar td:first-child{text-align:left;position:sticky;left:0;background:var(--paper);z-index:2}
 .calendar th:first-child{min-width:142px}
 .calendar .habit-name{padding:6px 8px;max-width:165px}
+.calendar .habit-count{
+ color:var(--muted);
+ font-size:10px;
+ white-space:nowrap;
+ margin-left:4px;
+}
 .calendar .daynum{font-size:10px}
 .calendar .today-head{color:#5f8052;font-weight:bold}
 .calendar .week-row td{height:24px;background:#f5f3ec;color:#8b8d80;font-size:10px}
@@ -238,7 +244,7 @@ textarea{width:100%;resize:vertical;min-height:95px}
  cursor:pointer;
 }
 @media(max-width:1100px){
- .layout{grid-template-columns:190px minmax(0,1fr)}
+ .layout{grid-template-columns:minmax(0,1fr)}
  .right-col{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
  .top-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
@@ -293,14 +299,12 @@ textarea{width:100%;resize:vertical;min-height:95px}
   }
   #activityPanel #bloomText { display: none; }
   #activityPanel .progress { margin-top: 7px; }
-  .right-col { display: none; }
+  .right-col { display:flex; grid-column:1/-1; }
   #moodSlot { display: block; }
 }
 /* Планшет: горизонтальная ориентация */
 @media (orientation: landscape) and (min-width: 701px) and (max-width: 1100px) {
-  .layout {
-    grid-template-columns: 220px minmax(0, 1fr) 245px;
-  }
+  .layout { grid-template-columns:minmax(0,1fr) 245px; }
 
   .right-col {
     grid-column: auto;
@@ -398,17 +402,7 @@ textarea{width:100%;resize:vertical;min-height:95px}
 
 
 <div class="layout">
-<aside class="column left-col">
- <section class="panel">
-  <h3 class="panel-title">My little rituals</h3>
-  <div class="small-title">ТВОИ ПРИВЫЧКИ</div>
-  <div id="habitList"></div>
-  <div id="habitsProgress"></div>
-  <div class="add-row"><input id="newHabit" type="text" maxlength="45" placeholder="Новая привычка…"><button id="addHabit">+</button></div>
-  <p class="muted">Нажми на название привычки, чтобы изменить его. Отметки сохраняются по датам.</p>
- </section>
- <div id="moodSlot"></div>
-</aside>
+
 
 <main class="column">
  <section class="panel">
@@ -457,6 +451,7 @@ textarea{width:100%;resize:vertical;min-height:95px}
 </main>
 
 <aside class="column right-col">
+ <div id="moodSlot"></div>
  <section class="panel bloom" id="activityPanel">
   <h3 class="panel-title">Today's activity</h3>
   <div class="bloom-plant" id="bloomPlant">🌱</div>
@@ -756,7 +751,7 @@ $("monthTopHabits").innerHTML=monthTop.length
  $("bloomPlant").textContent=todayDone>=40?"🔥":todayDone>=30?"🪷":todayDone>0?"🌿":"🌱";
  $("bloomTitle").textContent=todayDone>=40?"Хватит! Остановись!":todayDone>=30?"Баланс продуктивности":todayDone>0?"Умеренные шаги - залог успеха":"Всё начинается с малого";
  $("bloomText").textContent=`Сегодня выполнено ${count(todayKey)} из ${totalHabits} привычек.`;
- renderHabits();renderCalendar();renderChart();renderWeekSummary();renderOverview();renderMoodHistory();
+ renderCalendar();renderChart();renderWeekSummary();renderOverview();renderMoodHistory();
 }
 function renderHabits(){
  $("habitList").innerHTML="";
@@ -815,7 +810,9 @@ function renderCalendar(){
  html+="</tr>";
  const habits=habitsForMonth(selected);
   habits.forEach(h=>{
-   html+=`<tr><td class="habit-name"><span style="color:${h.color}">●</span> ${escapeHtml(h.name)}</td>`;
+   const completed=monthKeys(selected).filter(k=>day(k).checks[h.id]).length;
+   const goal=h.monthlyGoal||n;
+   html+=`<tr><td class="habit-name"><span style="color:${h.color}">●</span> ${escapeHtml(h.name)} <span class="habit-count">${completed}/${goal}</span></td>`;
    for(let i=1;i<=n;i++){const k=keyOf(new Date(selected.getFullYear(),selected.getMonth(),i)),done=!!day(k).checks[h.id];html+=`<td><span class="cell-check ${done?"done":""} ${k===todayKey?"today":""}" role="checkbox" tabindex="0" aria-checked="${done}" data-habit="${h.id}" data-date="${k}">${done?"✓":"·"}</span></td>`}
    html+="</tr>";
   });
@@ -1032,24 +1029,7 @@ function renderNotes(){
  $("noteList").querySelectorAll("[data-note-date]").forEach(b=>b.onclick=()=>{$("historyModal").classList.remove("open");openMood(b.dataset.noteDate)});
 }
 
-$("addHabit").onclick=()=>{
- const input=$("newHabit"),name=input.value.trim();
- if(!name)return;
- const habits=habitsForMonth(selected).map(h=>({...h}));
- habits.push({
-  id:"h"+Date.now(),
-  name,
-  color:colors[habits.length%colors.length]
- });
- const month=keyOf(selected).slice(0,7);
- data.habitVersions[month]=habits;
- data.habits=habits.map(h=>({...h}));
- input.value="";
- save();
- render();
-};
 
-$("newHabit").addEventListener("keydown",e=>{if(e.key==="Enter")$("addHabit").click()});
 $("prevMonth").onclick=()=>{selected=new Date(selected.getFullYear(),selected.getMonth()-1,1);render()};
 $("nextMonth").onclick=()=>{selected=new Date(selected.getFullYear(),selected.getMonth()+1,1);render()};
 $("monthPicker").onchange=()=>{if($("monthPicker").value){const [y,m]=$("monthPicker").value.split("-").map(Number);selected=new Date(y,m-1,1);render()}};
