@@ -362,16 +362,19 @@ textarea{width:100%;resize:vertical;min-height:95px}
  <div class="stat" style="background:#faf5e7"><span class="emoji">🌅</span><div class="label">Пробуждение</div><div class="number" id="wakeStat">—</div><div class="hint">среднее за месяц</div></div>
  
   <section class="panel">
-   <span class="emoji">🌿</span>
+   
    <div class="label">Привычки за неделю</div>
    <div id="weekTopHabits" class="week-top-habits">
    <span class="muted">Каждый шаг имеет значение.</span>
    </div>
   </section>
+ 
   <section class="panel">
-   <span class="emoji">🌳</span>
+  
    <div class="label">Привычки за месяц</div>
-   <div class="donut-wrap"><div class="donut" id="monthDonut"><strong id="monthDonutText">0%</strong></div><div><p class="muted" id="monthDonutHint">Начни с одного шага.</p></div></div>
+   <div id="monthTopHabits" class="week-top-habits">
+   <span class="muted">Начни с одного шага.</span>
+   </div>
   </section>
  
 </section>
@@ -656,9 +659,42 @@ $("weekTopHabits").innerHTML=weekTop.length
   </div>
  `).join("")
  :'<span class="muted">Пока нет выполнений.</span>';
- $("monthDonutText").textContent=pct(total,possible)+"%";
- $("monthDonut").style.background=`conic-gradient(#e6c9c9 ${pct(total,possible)}%,#f0eee7 0)`;
- $("monthDonutHint").textContent=total?total+" выполнений за месяц":"Начни с одного маленького шага.";
+const monthTotals={};
+
+keys.forEach(k=>{
+ const habits=habitsForMonth(parseKey(k));
+
+ habits.forEach(h=>{
+  if(!monthTotals[h.id]){
+   monthTotals[h.id]={
+    name:h.name,
+    count:0,
+    color:h.color
+   };
+  }
+
+  if(day(k).checks[h.id]){
+   monthTotals[h.id].count++;
+  }
+ });
+});
+
+const monthTop=Object.values(monthTotals)
+ .filter(h=>h.count>0)
+ .sort((a,b)=>b.count-a.count)
+ .slice(0,4);
+
+$("monthTopHabits").innerHTML=monthTop.length
+ ?monthTop.map(h=>`
+  <div class="week-top-item">
+   <span class="week-top-name">
+    <span style="color:${h.color}">●</span>
+    ${escapeHtml(h.name)}
+   </span>
+   <strong>${h.count} раз</strong>
+  </div>
+ `).join("")
+ :'<span class="muted">Пока нет выполнений.</span>';
  $("todayBtn").onclick=()=>{
  now=new Date();
  lastTodayKey=keyOf(now);
