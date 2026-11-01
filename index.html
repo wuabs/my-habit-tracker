@@ -414,11 +414,9 @@ textarea{width:100%;resize:vertical;min-height:95px}
  <section class="panel">
   <div class="month-head">
    <div><h2>Rituals tracker</h2><div class="subtitle" id="monthTitle">Месяц</div></div>
-   <div class="month-nav">
-    <button id="prevMonth" aria-label="Предыдущий месяц">‹</button>
-    <button id="nextMonth" aria-label="Следующий месяц">›</button>
-    <div class="rare-actions">
-    <button id="clearMonth" title="Очистить все заполнения выбранного месяца">🗑️ Очистить месяц</button>
+    <div class="month-nav">
+     <button id="prevMonth" aria-label="Предыдущий месяц">‹</button>
+     <button id="nextMonth" aria-label="Следующий месяц">›</button>
     </div>
    </div>
   </div>
@@ -429,8 +427,12 @@ textarea{width:100%;resize:vertical;min-height:95px}
   </div>
   <div class="calendar-wrap"><table class="calendar" id="calendar"></table></div>
   <div class="muted" style="margin-top:10px">Нажми на ячейку с галочкой, чтобы отметить привычку. В строке пробуждения введи время. Нажми на смайлик, чтобы изменить настроение.</div>
-  <div class="week-summary" id="weekSummary"></div>
+    <div class="week-summary" id="weekSummary"></div>
  </section>
+
+ <div class="rare-actions">
+  <button id="clearMonth" title="Очистить все заполнения выбранного месяца">🗑️ Очистить месяц</button>
+ </div>
  <section class="panel" id="progressPanel">
   <div class="section-row" style="display:flex;justify-content:space-between;gap:8px;align-items:center">
    <div><h3 class="panel-title" style="margin-bottom:4px">Your progress</h3><div class="small-title">ВЫПОЛНЕННЫЕ ПРИВЫЧКИ ПО ДНЯМ</div></div>
