@@ -99,7 +99,41 @@ input[type=text],textarea,select,input[type=time],input[type=month]{background:#
  height:100%;
  box-sizing:border-box;
 }
+.week-top-habits{
+ margin-top:8px;
+ display:flex;
+ flex-direction:column;
+ gap:6px;
+ min-width:0;
+}
 
+.week-top-item{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:5px;
+ min-width:0;
+}
+
+.week-top-name{
+ display:flex;
+ align-items:center;
+ gap:5px;
+ min-width:0;
+ overflow:hidden;
+ white-space:nowrap;
+ text-overflow:ellipsis;
+ font-size:10px;
+}
+
+.week-top-item strong{
+ display:block;
+ flex-shrink:0;
+ font-size:10px;
+ font-weight:500;
+ white-space:nowrap;
+}
+  
 .week-box strong{
  display:inline;
  font-size:10px;
@@ -330,7 +364,9 @@ textarea{width:100%;resize:vertical;min-height:95px}
   <section class="panel">
    <span class="emoji">🌿</span>
    <div class="label">Привычки за неделю</div>
-   <div class="donut-wrap"><div class="donut" id="weekDonut"><strong id="weekDonutText">0%</strong></div><div><p class="muted" id="weekDonutHint">Каждый шаг имеет значение.</p></div></div>
+   <div id="weekTopHabits" class="week-top-habits">
+   <span class="muted">Каждый шаг имеет значение.</span>
+   </div>
   </section>
   <section class="panel">
    <span class="emoji">🌳</span>
@@ -584,9 +620,42 @@ function render(){
  const moodCount=moodsThis.filter(m=>m===avgMood).length;
  $("moodHint").textContent=avgMood?moodCount+" дн. с этим настроением":"нет записей";
  $("wakeStat").textContent=timeText(avgWake(keys));
- $("weekDonutText").textContent=pct(wc,wp)+"%";
- $("weekDonut").style.background=`conic-gradient(#9fb68e ${pct(wc,wp)}%,#f0eee7 0)`;
- $("weekDonutHint").textContent=wc?wc+" выполнений за текущую неделю":"Начни в своём темпе.";
+ const weekTotals={};
+
+wk.forEach(k=>{
+ const habits=habitsForMonth(parseKey(k));
+
+ habits.forEach(h=>{
+  if(!weekTotals[h.id]){
+   weekTotals[h.id]={
+    name:h.name,
+    count:0,
+    color:h.color
+   };
+  }
+
+  if(day(k).checks[h.id]){
+   weekTotals[h.id].count++;
+  }
+ });
+});
+
+const weekTop=Object.values(weekTotals)
+ .filter(h=>h.count>0)
+ .sort((a,b)=>b.count-a.count)
+ .slice(0,4);
+
+$("weekTopHabits").innerHTML=weekTop.length
+ ?weekTop.map(h=>`
+  <div class="week-top-item">
+   <span class="week-top-name">
+    <span style="color:${h.color}">●</span>
+    ${escapeHtml(h.name)}
+   </span>
+   <strong>${h.count} раз</strong>
+  </div>
+ `).join("")
+ :'<span class="muted">Пока нет выполнений.</span>';
  $("monthDonutText").textContent=pct(total,possible)+"%";
  $("monthDonut").style.background=`conic-gradient(#e6c9c9 ${pct(total,possible)}%,#f0eee7 0)`;
  $("monthDonutHint").textContent=total?total+" выполнений за месяц":"Начни с одного маленького шага.";
