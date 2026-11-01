@@ -497,7 +497,16 @@ textarea{width:100%;resize:vertical;min-height:95px}
   <div class="note-list" id="noteList"></div>
  </div>
 </div>
-
+<div class="modal-backdrop" id="habitModal">
+ <div class="modal">
+  <div class="modal-top">
+   <h2>Мои привычки</h2>
+   <button class="close" id="closeHabitModal">Закрыть</button>
+  </div>
+  <div id="habitManagerList"></div>
+  <button class="btn" id="addHabitBtn">＋ Добавить привычку</button>
+ </div>
+</div>
 <script>
 (()=>{
 "use strict";
@@ -1047,7 +1056,114 @@ function renderNotes(){
  $("noteList").querySelectorAll("[data-note-date]").forEach(b=>b.onclick=()=>{$("historyModal").classList.remove("open");openMood(b.dataset.noteDate)});
 }
 
+function saveManagedHabits(updated){
+ const month=monthKey(selected);
+ data.habitVersions[month]=updated.map(h=>({...h}));
+ data.habits=updated.map(h=>({...h}));
+ save();
+ render();
+ renderHabitManager();
+}
 
+function renderHabitManager(){
+ const list=$("habitManagerList");
+ const habits=habitsForMonth(selected);
+ const maxGoal=daysInMonth(selected);
+
+ list.innerHTML=habits.map((h,i)=>`
+  <div style="padding:12px 0;border-bottom:1px solid var(--line)">
+   <label style="display:block;font-size:12px;color:var(--muted)">Название привычки</label>
+   <input data-name="${h.id}" value="${escapeHtml(h.name)}"
+    style="width:100%;margin:5px 0 10px;padding:9px;border:1px solid var(--line);border-radius:8px">
+
+   <label style="font-size:12px;color:var(--muted)">Цель на ${fmt(selected,{month:"long"})}</label>
+   <input data-goal="${h.id}" type="number" min="1" max="${maxGoal}"
+    value="${goalForHabit(h,selected)}"
+    style="width:75px;margin:5px 0;padding:8px;border:1px solid var(--line);border-radius:8px">
+
+   <div style="display:flex;gap:6px;margin-top:8px">
+    <button class="btn light" data-up="${h.id}" ${i===0?"disabled":""}>↑</button>
+    <button class="btn light" data-down="${h.id}" ${i===habits.length-1?"disabled":""}>↓</button>
+    <button class="btn light" data-delete="${h.id}" style="margin-left:auto;color:#b45b55">Удалить</button>
+   </div>
+  </div>
+ `).join("") || '<p class="muted">Пока нет привычек.</p>';
+
+ list.querySelectorAll("[data-name]").forEach(input=>{
+  input.onchange=()=>{
+   const updated=habitsForMonth(selected).map(h=>({...h}));
+   const h=updated.find(x=>x.id===input.dataset.name);
+   const name=input.value.trim();
+   if(!name){input.value=h.name;return}
+   h.name=name;
+   saveManagedHabits(updated);
+  };
+ });
+
+ list.querySelectorAll("[data-goal]").forEach(input=>{
+  input.onchange=()=>{
+   const goal=Number(input.value);
+   if(!Number.isInteger(goal)||goal<1||goal>maxGoal){
+    alert(`Цель должна быть от 1 до ${maxGoal}.`);
+    input.value=goalForHabit(habits.find(h=>h.id===input.dataset.goal),selected);
+    return;
+   }
+   const id=input.dataset.goal;
+   if(!data.monthlyGoals)data.monthlyGoals={};
+   if(!data.monthlyGoals[id])data.monthlyGoals[id]={};
+   data.monthlyGoals[id][monthKey(selected)]=goal;
+   save();
+   render();
+   renderHabitManager();
+  };
+ });
+
+ list.querySelectorAll("[data-up],[data-down]").forEach(button=>{
+  button.onclick=()=>{
+   const updated=habitsForMonth(selected).map(h=>({...h}));
+   const id=button.dataset.up||button.dataset.down;
+   const i=updated.findIndex(h=>h.id===id);
+   const next=button.hasAttribute("data-up")?i-1:i+1;
+   if(i<0||next<0||next>=updated.length)return;
+   [updated[i],updated[next]]=[updated[next],updated[i]];
+   saveManagedHabits(updated);
+  };
+ });
+
+ list.querySelectorAll("[data-delete]").forEach(button=>{
+  button.onclick=()=>{
+   const id=button.dataset.delete;
+   const h=habits.find(x=>x.id===id);
+   if(!confirm(`Удалить привычку «${h.name}» из этого месяца и последующих?`))return;
+   saveManagedHabits(habits.filter(x=>x.id!==id).map(x=>({...x})));
+  };
+ });
+}
+
+$("editHabits").onclick=()=>{
+ renderHabitManager();
+ $("habitModal").classList.add("open");
+};
+
+$("closeHabitModal").onclick=()=>$("habitModal").classList.remove("open");
+
+$("habitModal").addEventListener("click",e=>{
+ if(e.target===$("habitModal"))$("habitModal").classList.remove("open");
+});
+
+$("addHabitBtn").onclick=()=>{
+ const name=prompt("Название новой привычки:");
+ if(!name||!name.trim())return;
+
+ const updated=habitsForMonth(selected).map(h=>({...h}));
+ const colors=["#9b8ac4","#d58e83","#82a68b","#d4ad68","#82a9b4"];
+ updated.push({
+  id:"h"+Date.now(),
+  name:name.trim(),
+  color:colors[updated.length%colors.length]
+ });
+ saveManagedHabits(updated);
+};
 $("prevMonth").onclick=()=>{selected=new Date(selected.getFullYear(),selected.getMonth()-1,1);render()};
 $("nextMonth").onclick=()=>{selected=new Date(selected.getFullYear(),selected.getMonth()+1,1);render()};
 $("monthPicker").onchange=()=>{if($("monthPicker").value){const [y,m]=$("monthPicker").value.split("-").map(Number);selected=new Date(y,m-1,1);render()}};
@@ -1084,7 +1200,13 @@ $("importFile").onchange=async e=>{
   const imported=JSON.parse(await file.text());
   if(!Array.isArray(imported.habits)||!imported.days||typeof imported.days!=="object")throw new Error("invalid");
   if(!confirm("Импорт заменит текущие данные на данные из файла. Сначала экспортируй текущую копию. Продолжить?"))return;
-  data={habits:imported.habits,days:imported.days};save();render();alert("Данные импортированы.");
+  data={
+ habits:imported.habits,
+ days:imported.days,
+ habitVersions:imported.habitVersions||{},
+ monthlyGoals:imported.monthlyGoals||{}
+};
+save();render();alert("Данные импортированы.");
  }catch(err){alert("Не удалось прочитать файл. Выбери резервную копию Bloom & Balance в формате JSON.")}finally{e.target.value=""}
 };
 const panelHomes = {
