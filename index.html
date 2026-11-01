@@ -223,18 +223,18 @@ textarea{width:100%;resize:vertical;min-height:95px}
 .rare-actions{
  display:flex;
  justify-content:flex-end;
- margin-top:35px;
- padding:10px 0;
+ margin:8px 0 4px;
+ padding:0;
 }
 
 #clearMonth{
  background:transparent;
- border:1px solid #e8e5dc;
- border-radius:8px;
- padding:4px 8px;
- font-size:9px;
+ border:0;
+ border-radius:6px;
+ padding:3px 6px;
+ font-size:10px;
  color:#aaa69b;
- opacity:.55;
+ opacity:.35;
  cursor:pointer;
 }
 @media(max-width:1100px){
@@ -474,6 +474,10 @@ textarea{width:100%;resize:vertical;min-height:95px}
 </div>
 
 <div class="footer">Bloom & Balance · Your own pace is the right pace 🌿 · Регулярно сохраняй резервную копию</div>
+
+<div class="rare-actions">
+ <button id="clearMonth" title="Очистить все заполнения выбранного месяца">🗑️</button>
+</div>
 </div>
 
 <div class="modal-backdrop" id="moodModal">
@@ -1143,8 +1147,6 @@ render();
     });
   }
 </script>
-<div class="rare-actions">
- <button id="clearMonth" title="Очистить все заполнения выбранного месяца">🗑️</button>
-</div>
+
 </body>
 </html>
