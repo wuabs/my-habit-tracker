@@ -501,6 +501,21 @@ textarea{width:100%;resize:vertical;min-height:95px}
 (()=>{
 "use strict";
 const KEY="bloomBalanceTracker_v1";
+function monthKey(date){
+ return keyOf(new Date(date.getFullYear(),date.getMonth(),1)).slice(0,7);
+}
+
+function goalForHabit(habit,date){
+ const goals=data.monthlyGoals?.[habit.id]||{};
+ const target=monthKey(date);
+ const applicable=Object.keys(goals)
+  .filter(m=>m<=target)
+  .sort()
+  .pop();
+
+ return applicable?goals[applicable]:daysInMonth(date);
+}
+
 const colors=["#c6d6b6","#edcece","#eadba8","#cbdfe4","#ded2e8","#e6c9a8"];
 const moods=[
  {e:"🤩",t:"В восторге"},{e:"😊",t:"Счастливая"},{e:"😌",t:"Спокойная"},
@@ -552,7 +567,9 @@ function load(){
       [startMonth]:x.habits.map(h=>({...h}))
      };
     }
-
+    if(!x.monthlyGoals||typeof x.monthlyGoals!=="object"){
+     x.monthlyGoals={};
+    }
     return x;
    }
   }
@@ -811,7 +828,7 @@ function renderCalendar(){
  const habits=habitsForMonth(selected);
   habits.forEach(h=>{
    const completed=monthKeys(selected).filter(k=>day(k).checks[h.id]).length;
-   const goal=h.monthlyGoal||n;
+   const goal=goalForHabit(h,selected);
    html+=`<tr><td class="habit-name"><span style="color:${h.color}">●</span> ${escapeHtml(h.name)} <span class="habit-count">${completed}/${goal}</span></td>`;
    for(let i=1;i<=n;i++){const k=keyOf(new Date(selected.getFullYear(),selected.getMonth(),i)),done=!!day(k).checks[h.id];html+=`<td><span class="cell-check ${done?"done":""} ${k===todayKey?"today":""}" role="checkbox" tabindex="0" aria-checked="${done}" data-habit="${h.id}" data-date="${k}">${done?"✓":"·"}</span></td>`}
    html+="</tr>";
