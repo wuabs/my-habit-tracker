@@ -690,7 +690,11 @@ function render(){
  // monthly percentage is shown in the donut chart
  const wk=weekKeys(now),wc=wk.reduce((s,k)=>s+count(k),0),wp=wk.reduce((s,k)=>s+habitsForMonth(parseKey(k)).length,0);
  // weekly percentage is shown in the donut chart
- $("daysStat").textContent=(total/keys.length).toLocaleString("ru-RU",{maximumFractionDigits:1});
+ const elapsedDays=Math.max(1,Math.min(keys.length,now.getDate()-1));
+ const completedBeforeToday=keys
+ .filter(k=>k<keyOf(now))
+ .reduce((sum,k)=>sum+count(k),0);
+ $("daysStat").textContent=(completedBeforeToday/elapsedDays).toLocaleString("ru-RU",{maximumFractionDigits:1});
  const moodsThis=keys.filter(k=>day(k).mood).map(k=>day(k).mood);
  const avgMood=moodsThis.length
  ? Number(moodsThis.reduce((best,mood,_,arr)=>
