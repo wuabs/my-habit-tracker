@@ -404,7 +404,7 @@ textarea{width:100%;resize:vertical;min-height:95px}
 </header>
 <section class="top-stats">
  <div id="activitySlot"></div>
- <div class="stat" style="background:#fbf4f1"><span class="emoji">🌷</span><div class="label">В выбранном месяце</div><div class="number" id="daysStat">0</div><div class="hint">дней с отметками</div></div>
+ <div class="stat" style="background:#fbf4f1"><span class="emoji">🌷</span><div class="label">В выбранном месяце</div><div class="number" id="daysStat">0</div><div class="hint">привычек в день в среднем</div></div>
  <div class="stat" style="background:#f1f5f5"><span class="emoji">💭</span><div class="label">Настроение месяца</div><div class="number" id="moodStat">—</div><div class="hint" id="moodHint">за выбранный месяц</div></div>
  <div class="stat" style="background:#faf5e7"><span class="emoji">🌅</span><div class="label">Пробуждение</div><div class="number" id="wakeStat">—</div><div class="hint">среднее за месяц</div></div>
  
@@ -690,7 +690,7 @@ function render(){
  // monthly percentage is shown in the donut chart
  const wk=weekKeys(now),wc=wk.reduce((s,k)=>s+count(k),0),wp=wk.reduce((s,k)=>s+habitsForMonth(parseKey(k)).length,0);
  // weekly percentage is shown in the donut chart
- $("daysStat").textContent=keys.filter(k=>count(k)>0||day(k).mood||day(k).wake||day(k).note.trim()).length;
+ $("daysStat").textContent=(total/keys.length).toLocaleString("ru-RU",{maximumFractionDigits:1});
  const moodsThis=keys.filter(k=>day(k).mood).map(k=>day(k).mood);
  const avgMood=moodsThis.length
  ? Number(moodsThis.reduce((best,mood,_,arr)=>
