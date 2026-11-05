@@ -334,7 +334,7 @@ textarea{width:100%;resize:vertical;min-height:95px}
   #moodSlot { display: block; }
 }
 /* Планшет: горизонтальная ориентация */
-@media (orientation: landscape) and (min-width: 701px) and (max-width: 1100px) {
+@media (orientation: landscape) and (min-width: 701px) and (max-width: 1400px) {
   /* В горизонтальном положении все шесть верхних карточек стоят в один ряд. */
   .top-stats {
     grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -1296,7 +1296,7 @@ progressPanel.parentNode.insertBefore(panelHomes.progress, progressPanel);
 function arrangePanels(){
  const topStats=$("activitySlot").parentNode;
  const moodSlot=$("moodSlot");
- const isTablet=window.matchMedia("(min-width: 701px) and (max-width: 1100px)").matches;
+ const isTablet=window.matchMedia("(min-width: 701px) and (max-width: 1400px)").matches;
  const isLandscape=window.matchMedia("(orientation: landscape)").matches;
  const layout=document.querySelector(".layout");
 
