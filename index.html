@@ -374,13 +374,11 @@ textarea{width:100%;resize:vertical;min-height:95px}
   }
   #activityPanel .progress { margin-top: 4px; }
 
-  /* Календарь, Mood Garden и график занимают всю ширину в нужном порядке. */
+  /* В альбомной ориентации три основных блока идут друг за другом на всю ширину. */
   .layout { display: flex; flex-direction: column; gap: 13px; }
-  .layout > main, .layout > .right-col { display: contents; }
-  .layout > main > section:first-child { order: 1; width: 100%; }
-  #progressPanel { order: 2; width: 100%; }
-  #moodPanel { order: 3; width: 100%; }
-  .right-col { grid-column: auto; }
+  .layout > main { display: contents; }
+  .layout > .right-col { display: none; }
+  .layout > .panel, .layout > main > section { width: 100%; box-sizing: border-box; }
 }
   
 .mood-popover {
@@ -1281,32 +1279,42 @@ save();render();alert("Данные импортированы.");
 };
 const panelHomes = {
  activity: document.createComment("activity home"),
- mood: document.createComment("mood home")
+ mood: document.createComment("mood home"),
+ progress: document.createComment("progress home")
 };
 
 const activityPanel = $("activityPanel");
 const moodPanel = $("moodPanel");
+const progressPanel = $("progressPanel");
+const calendarPanel = progressPanel.previousElementSibling;
 
-// Save the original positions before moving either panel.
+// Save the original positions before moving panels between layout containers.
 activityPanel.parentNode.insertBefore(panelHomes.activity, activityPanel);
 moodPanel.parentNode.insertBefore(panelHomes.mood, moodPanel);
+progressPanel.parentNode.insertBefore(panelHomes.progress, progressPanel);
 
 function arrangePanels(){
- const activitySlot=$("activitySlot");
+ const topStats=$("activitySlot").parentNode;
  const moodSlot=$("moodSlot");
  const isTablet=window.matchMedia("(min-width: 701px) and (max-width: 1100px)").matches;
+ const isLandscape=window.matchMedia("(orientation: landscape)").matches;
+ const layout=document.querySelector(".layout");
 
  if(isTablet){
-  // На планшете активность входит в верхний ряд карточек.
-  activitySlot.appendChild(activityPanel);
-  if(window.matchMedia("(orientation: portrait)").matches){
-   moodSlot.appendChild(moodPanel);
+  // Today's activity становится полноценной карточкой верхнего ряда.
+  topStats.insertBefore(activityPanel, topStats.firstChild);
+  if(isLandscape){
+   // В альбомной ориентации календарь, Progress и Mood Garden — прямые соседи в layout.
+   layout.appendChild(progressPanel);
+   layout.appendChild(moodPanel);
   }else{
-   // В альбомной ориентации Mood Garden остаётся отдельным блоком под календарём.
-   panelHomes.mood.parentNode.insertBefore(moodPanel, panelHomes.mood.nextSibling);
+   // В портретной ориентации сохраняем исходное расположение Progress и Mood Garden.
+   calendarPanel.parentNode.insertBefore(progressPanel, calendarPanel.nextSibling);
+   moodSlot.appendChild(moodPanel);
   }
  }else{
   panelHomes.activity.parentNode.insertBefore(activityPanel, panelHomes.activity.nextSibling);
+  panelHomes.progress.parentNode.insertBefore(progressPanel, panelHomes.progress.nextSibling);
   panelHomes.mood.parentNode.insertBefore(moodPanel, panelHomes.mood.nextSibling);
  }
 }
